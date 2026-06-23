@@ -1,0 +1,5 @@
+-P ubuntu-latest=shivammathur/node:latest
+--container-architecture linux/amd64
+--env DB_CONNECTION=sqlite
+--env DB_DATABASE=:memory:
+--env XDEBUG_MODE=coverage
