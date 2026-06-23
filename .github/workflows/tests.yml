@@ -73,4 +73,18 @@ jobs:
         run: composer update --prefer-dist --no-interaction --no-progress
 
       - name: Run coverage
-        run: composer test:coverage
+        run: |
+          composer test:coverage -- --coverage-clover clover.xml > coverage_output.txt
+          cat coverage_output.txt
+          PERCENTAGE=$(grep -oP '(?<=Line Coverage: )\d+\.\d+' coverage_output.txt || echo "0.0")
+          echo "COVERAGE=$PERCENTAGE%" >> $GITHUB_ENV
+
+      - name: Create Coverage Badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ secrets.GIST_ID }}
+          filename: laravel-trustbird-coverage.json
+          label: coverage
+          message: ${{ env.COVERAGE }}
+          color: green
