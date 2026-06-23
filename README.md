@@ -1,3 +1,5 @@
+[![Tests](https://github.com/Trustbird/laravel-trustbird/actions/workflows/tests.yml/badge.svg)](https://github.com/Trustbird/laravel-trustbird/actions/workflows/tests.yml)
+
 # Trustbird Laravel Core
 
 ⚠️ Trustbird is currently in active alpha development.
