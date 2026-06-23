@@ -52,3 +52,19 @@ it('records a personnel reminder', function (): void {
     $action = new RecordPersonnelReminder();
     expect($action)->toBeInstanceOf(RecordPersonnelReminder::class);
 });
+
+it('can access the person factory', function (): void {
+    $factory = Person::newFactory();
+    expect($factory)->toBeInstanceOf(\Trustbird\Database\Factories\Person\PersonFactory::class);
+});
+
+it('covers person casts', function (): void {
+    $person = Person::factory()->create([
+        'metadata' => ['key' => 'value'],
+        'started_at' => now(),
+    ]);
+    
+    expect($person->metadata)->toBeArray()
+        ->and($person->metadata['key'])->toBe('value')
+        ->and($person->started_at)->toBeInstanceOf(\Carbon\CarbonInterface::class);
+});
