@@ -1,8 +1,8 @@
 <?php
 
-use Trustbird\Events\PersonCreated;
-use Trustbird\Events\PersonUpdated;
-use Trustbird\Events\PersonTerminated;
+use Trustbird\People\Events\PersonCreated;
+use Trustbird\People\Events\PersonUpdated;
+use Trustbird\People\Events\PersonTerminated;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Enums\PersonnelTaskStatus;

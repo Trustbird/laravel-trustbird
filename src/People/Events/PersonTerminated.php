@@ -1,5 +1,5 @@
 <?php
 
-namespace Trustbird\Events;
+namespace Trustbird\People\Events;
 
 class PersonTerminated {}
