@@ -1,7 +1,10 @@
 <?php
 
 use Trustbird\People\Actions\CreatePerson;
+use Trustbird\People\Actions\MarkPersonnelTaskComplete;
+use Trustbird\People\Actions\RecordPersonnelReminder;
 use Trustbird\People\Actions\TerminatePerson;
+use Trustbird\People\Actions\UpdatePerson;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Models\Person;
@@ -18,6 +21,18 @@ it('creates a person', function (): void {
     expect($person)->toBeInstanceOf(Person::class);
 });
 
+it('updates a person', function (): void {
+    $person = Person::factory()->create([
+        'first_name' => 'Jane',
+    ]);
+
+    $updatedPerson = app(UpdatePerson::class)->handle($person, [
+        'first_name' => 'John',
+    ]);
+
+    expect($updatedPerson->first_name)->toBe('John');
+});
+
 it('terminates a person', function (): void {
     $person = Person::factory()->create();
 
@@ -26,4 +41,14 @@ it('terminates a person', function (): void {
     expect(
         $person->refresh()->employment_status
     )->toBe(EmploymentStatus::Terminated);
+});
+
+it('marks a personnel task complete', function (): void {
+    $action = new MarkPersonnelTaskComplete();
+    expect($action)->toBeInstanceOf(MarkPersonnelTaskComplete::class);
+});
+
+it('records a personnel reminder', function (): void {
+    $action = new RecordPersonnelReminder();
+    expect($action)->toBeInstanceOf(RecordPersonnelReminder::class);
 });
