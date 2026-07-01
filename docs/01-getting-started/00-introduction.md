@@ -16,6 +16,7 @@ If you are installing Trustbird for the first time, start with:
 
 * [Installation](01-installation.md)
 * [People](../02-usage/01-people.md)
+* [Assets](../02-usage/02-assets.md)
 
 ## Core principles
 
@@ -33,4 +34,6 @@ Trustbird is built around a few key principles:
 
 Track employees, contractors and other individuals that are part of an organisation's trust and compliance scope.
 
-More domains will be added in future releases.
+### Assets
+
+Manage physical and virtual assets, devices, systems and data stores.

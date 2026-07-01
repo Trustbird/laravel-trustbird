@@ -8,12 +8,13 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Trustbird\People\Models\Person;
 
-class PersonUpdated
+class PersonnelReminderRecorded
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
         public Person $person,
+        public array $reminderData = [],
     ) {}
 }
