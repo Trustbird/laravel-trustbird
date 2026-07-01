@@ -67,6 +67,32 @@ use Trustbird\People\Actions\TerminatePerson;
 app(TerminatePerson::class)->handle($person);
 ```
 
+## Completing tasks and reminders
+
+You can mark tasks as complete and record reminders for personnel using dedicated actions.
+
+### Mark task complete
+
+```php
+use Trustbird\People\Actions\MarkPersonnelTaskComplete;
+
+app(MarkPersonnelTaskComplete::class)->handle($person, [
+    'task' => 'equipment_provisioning',
+    'completed_at' => now(),
+]);
+```
+
+### Record reminder
+
+```php
+use Trustbird\People\Actions\RecordPersonnelReminder;
+
+app(RecordPersonnelReminder::class)->handle($person, [
+    'type' => 'contract_renewal',
+    'remind_at' => now()->addYear(),
+]);
+```
+
 ## Future roadmap
 
 Future releases will expand the People domain with:
