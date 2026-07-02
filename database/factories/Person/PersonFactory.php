@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Models\Person;
+use Trustbird\Workspaces\Models\Workspace;
 
 final class PersonFactory extends Factory
 {
@@ -16,6 +17,7 @@ final class PersonFactory extends Factory
     public function definition(): array
     {
         return [
+            'workspace_id' => Workspace::factory(),
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
 

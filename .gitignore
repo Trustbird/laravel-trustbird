@@ -3,6 +3,7 @@
 /.idea
 /.fleet
 /.vscode
+/.junie
 
 .phpunit.result.cache
 .phpunit.cache

@@ -7,12 +7,16 @@ namespace Trustbird\People\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Trustbird\Database\Factories\Person\PersonFactory;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
+use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
+use Trustbird\Workspaces\Models\Workspace;
 
 final class Person extends Model
 {
+    use BelongsToWorkspace;
     use HasFactory;
     use HasUlids;
 
@@ -46,4 +50,5 @@ final class Person extends Model
             'metadata' => 'array',
         ];
     }
+
 }
