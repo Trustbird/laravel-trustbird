@@ -7,6 +7,13 @@ use Trustbird\Assets\Events\AssetCreated;
 use Trustbird\Assets\Events\AssetUpdated;
 use Trustbird\Assets\Events\AssetDeleted;
 use Trustbird\Assets\Enums\AssetKind;
+use Trustbird\Risks\Events\RiskCreated;
+use Trustbird\Risks\Events\RiskUpdated;
+use Trustbird\Risks\Events\RiskReviewed;
+use Trustbird\Risks\Enums\RiskStatus;
+use Trustbird\Risks\Enums\RiskTreatment;
+use Trustbird\Risks\Enums\RiskLevel;
+use Trustbird\Risks\Models\Risk;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Enums\PersonnelTaskStatus;
@@ -28,6 +35,11 @@ it('instantiates events', function (): void {
     expect(new AssetCreated($asset))->toBeInstanceOf(AssetCreated::class);
     expect(new AssetUpdated($asset))->toBeInstanceOf(AssetUpdated::class);
     expect(new AssetDeleted($asset))->toBeInstanceOf(AssetDeleted::class);
+
+    $risk = Risk::factory()->create();
+    expect(new RiskCreated($risk))->toBeInstanceOf(RiskCreated::class);
+    expect(new RiskUpdated($risk))->toBeInstanceOf(RiskUpdated::class);
+    expect(new RiskReviewed($risk))->toBeInstanceOf(RiskReviewed::class);
 
     $workspace = Workspace::factory()->create();
     expect(new WorkspaceCreated($workspace))->toBeInstanceOf(WorkspaceCreated::class);
@@ -65,4 +77,13 @@ it('covers all enums', function (): void {
     
     expect(AssetKind::cases())->toBeArray()
         ->and(AssetKind::Device->value)->toBe('device');
+
+    expect(RiskStatus::cases())->toBeArray()
+        ->and(RiskStatus::Open->value)->toBe('open');
+
+    expect(RiskTreatment::cases())->toBeArray()
+        ->and(RiskTreatment::Reduce->value)->toBe('reduce');
+
+    expect(RiskLevel::cases())->toBeArray()
+        ->and(RiskLevel::High->value)->toBe('high');
 });
