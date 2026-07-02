@@ -11,4 +11,5 @@ Please follow the steps below to get started:
 ## [Step 2: Usage](02-usage/01-workspaces.md)
 * [Workspaces](02-usage/01-workspaces.md)
 * [People](02-usage/02-people.md)
-* [Assets](02-usage/03-assets.md)
+* [Teams](02-usage/03-teams.md)
+* [Assets](02-usage/04-assets.md)

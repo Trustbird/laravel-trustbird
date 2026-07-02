@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Trustbird\Database\Factories\Person\PersonFactory;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
+use Trustbird\Teams\Models\Team;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 use Trustbird\Workspaces\Models\Workspace;
 
@@ -51,4 +52,13 @@ final class Person extends Model
         ];
     }
 
+    public function ownedTeams(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Team::class, 'owner_id');
+    }
+
+    public function teams(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'team_person', 'person_id', 'team_id');
+    }
 }

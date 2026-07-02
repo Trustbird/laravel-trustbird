@@ -17,7 +17,8 @@ If you are installing Trustbird for the first time, start with:
 * [Installation](01-installation.md)
 * [Workspaces](../02-usage/01-workspaces.md)
 * [People](../02-usage/02-people.md)
-* [Assets](../02-usage/03-assets.md)
+* [Teams](../02-usage/03-teams.md)
+* [Assets](../02-usage/04-assets.md)
 
 ## Core principles
 
@@ -38,6 +39,10 @@ The primary building block for multi-tenancy. Workspaces allow you to group peop
 ### People
 
 Track employees, contractors and other individuals that are part of an organisation's trust and compliance scope.
+
+### Teams
+
+Group people within your organization into departments, squads or projects.
 
 ### Assets
 
