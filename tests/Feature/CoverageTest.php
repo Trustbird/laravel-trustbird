@@ -13,6 +13,9 @@ use Trustbird\People\Enums\PersonnelTaskStatus;
 use Trustbird\TrustbirdServiceProvider;
 use Trustbird\People\Models\Person;
 use Trustbird\Assets\Models\Asset;
+use Trustbird\Workspaces\Models\Workspace;
+use Trustbird\Workspaces\Events\WorkspaceCreated;
+use Trustbird\Workspaces\Events\WorkspaceUpdated;
 
 it('instantiates events', function (): void {
     $person = Person::factory()->create();
@@ -25,6 +28,10 @@ it('instantiates events', function (): void {
     expect(new AssetCreated($asset))->toBeInstanceOf(AssetCreated::class);
     expect(new AssetUpdated($asset))->toBeInstanceOf(AssetUpdated::class);
     expect(new AssetDeleted($asset))->toBeInstanceOf(AssetDeleted::class);
+
+    $workspace = Workspace::factory()->create();
+    expect(new WorkspaceCreated($workspace))->toBeInstanceOf(WorkspaceCreated::class);
+    expect(new WorkspaceUpdated($workspace))->toBeInstanceOf(WorkspaceUpdated::class);
 });
 
 it('can instantiate service provider', function (): void {

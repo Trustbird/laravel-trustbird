@@ -88,6 +88,20 @@ Avoid database-specific behaviour when possible.
 
 SQLite and MySQL compatibility are required.
 
+## Multi-tenancy
+
+Trustbird is a multi-tenant application by design.
+
+Every resource must belong to a `Workspace`.
+
+- All models (except `Workspace` itself) must include a `workspace_id` foreign key.
+- All models must use the `Trustbird\Workspaces\Concerns\BelongsToWorkspace` trait. This trait automatically adds `workspace_id` to the model's `$fillable` attributes.
+- All database migrations must include a `workspace_id` column:
+  ```php
+  $table->foreignUlid('workspace_id')->after('id')->nullable()->constrained('workspaces')->cascadeOnDelete();
+  ```
+- All factory definitions must include a `workspace_id` associated with a `Workspace` factory.
+
 ## Future-proofing
 
 Every module should be removable, replaceable, or extendable with minimal impact.

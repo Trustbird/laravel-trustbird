@@ -11,9 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Trustbird\Assets\Enums\AssetKind;
 use Trustbird\Database\Factories\Asset\AssetFactory;
 use Trustbird\People\Models\Person;
+use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
+use Trustbird\Workspaces\Models\Workspace;
 
 final class Asset extends Model
 {
+    use BelongsToWorkspace;
     use HasFactory;
     use HasUlids;
 
@@ -57,6 +60,7 @@ final class Asset extends Model
     {
         return $this->belongsTo(Person::class, 'owner_id');
     }
+
 
     public function isDevice(): bool
     {

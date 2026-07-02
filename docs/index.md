@@ -8,5 +8,7 @@ Please follow the steps below to get started:
 * [Introduction](01-getting-started/00-introduction.md)
 * [Installation](01-getting-started/01-installation.md)
 
-## [Step 2: Usage](02-usage/01-people.md)
-* [People](02-usage/01-people.md)
+## [Step 2: Usage](02-usage/01-workspaces.md)
+* [Workspaces](02-usage/01-workspaces.md)
+* [People](02-usage/02-people.md)
+* [Assets](02-usage/03-assets.md)

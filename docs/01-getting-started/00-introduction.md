@@ -15,8 +15,9 @@ APIs, database structures and package boundaries may change before the first sta
 If you are installing Trustbird for the first time, start with:
 
 * [Installation](01-installation.md)
-* [People](../02-usage/01-people.md)
-* [Assets](../02-usage/02-assets.md)
+* [Workspaces](../02-usage/01-workspaces.md)
+* [People](../02-usage/02-people.md)
+* [Assets](../02-usage/03-assets.md)
 
 ## Core principles
 
@@ -29,6 +30,10 @@ Trustbird is built around a few key principles:
 * AI assists, humans decide.
 
 ## Available domains
+
+### Workspaces
+
+The primary building block for multi-tenancy. Workspaces allow you to group people, assets, and other resources into distinct organizational units.
 
 ### People
 

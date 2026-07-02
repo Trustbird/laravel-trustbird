@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Trustbird\Assets\Enums\AssetKind;
 use Trustbird\Assets\Models\Asset;
 use Trustbird\People\Models\Person;
+use Trustbird\Workspaces\Models\Workspace;
 
 /**
  * @extends Factory<Asset>
@@ -19,6 +20,7 @@ final class AssetFactory extends Factory
     public function definition(): array
     {
         return [
+            'workspace_id' => Workspace::factory(),
             'name' => $this->faker->words(3, true),
             'description' => $this->faker->sentence(),
             'kind' => $this->faker->randomElement(AssetKind::cases()),
