@@ -8,6 +8,12 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ### Added
 
+- **Risks Module**: Initial implementation including `Risk` model, migration, factory, and actions.
+- **Risks Module**: Plain-language lifecycle statuses and treatment options via `RiskStatus`, `RiskTreatment`, and `RiskLevel` enums.
+- **Risks Module**: Owner relationship to `Person` and review workflow via `ReviewRisk`.
+- **Risks Module**: Integrated events (`RiskCreated`, `RiskUpdated`, `RiskReviewed`).
+- **Documentation**: Added risks domain usage guide.
+
 ## [0.1.0-alpha.2] - 2026-07-01
 
 ### Added

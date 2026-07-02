@@ -13,3 +13,4 @@ Please follow the steps below to get started:
 * [People](02-usage/02-people.md)
 * [Teams](02-usage/03-teams.md)
 * [Assets](02-usage/04-assets.md)
+* [Risks](02-usage/05-risks.md)
