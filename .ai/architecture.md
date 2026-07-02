@@ -90,17 +90,37 @@ SQLite and MySQL compatibility are required.
 
 ## Multi-tenancy
 
-Trustbird is a multi-tenant application by design.
+Trustbird is a multi-tenant application by design, but supports both single-tenant and multi-tenant deployments.
+
+### Configuration
+
+Multi-tenancy behavior is controlled via the `trustbird.multi_tenant` configuration key:
+
+- `false` (default): Single-tenant mode. A default workspace is used if none is provided.
+- `true`: Multi-tenant mode. A `workspace_id` must be explicitly provided during resource creation.
+
+### Resource Isolation
 
 Every resource must belong to a `Workspace`.
 
 - All models (except `Workspace` itself) must include a `workspace_id` foreign key.
-- All models must use the `Trustbird\Workspaces\Concerns\BelongsToWorkspace` trait. This trait automatically adds `workspace_id` to the model's `$fillable` attributes.
+- All models must use the `Trustbird\Workspaces\Concerns\BelongsToWorkspace` trait. This trait:
+    - Automatically adds `workspace_id` to the model's `$fillable` attributes.
+    - In single-tenant mode, automatically assigns the first available workspace if `workspace_id` is missing.
+    - In multi-tenant mode, throws a `RuntimeException` if `workspace_id` is missing during creation.
 - All database migrations must include a `workspace_id` column:
   ```php
   $table->foreignUlid('workspace_id')->after('id')->nullable()->constrained('workspaces')->cascadeOnDelete();
   ```
 - All factory definitions must include a `workspace_id` associated with a `Workspace` factory.
+
+### Installation
+
+During installation, a default workspace should be created. This can be done using the provided command:
+
+```bash
+php artisan trustbird:install
+```
 
 ## Future-proofing
 
