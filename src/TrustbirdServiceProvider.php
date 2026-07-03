@@ -11,6 +11,8 @@ use Trustbird\People\Contracts\HasPeople;
 use Trustbird\People\Models\Person;
 use Trustbird\Risks\Contracts\HasRisks;
 use Trustbird\Risks\Models\Risk;
+use Trustbird\Policies\Contracts\HasPolicies;
+use Trustbird\Policies\Models\Policy;
 use Trustbird\Teams\Contracts\HasTeams;
 use Trustbird\Teams\Models\Team;
 use Trustbird\Workspaces\Contracts\HasWorkspaces;
@@ -51,6 +53,10 @@ final class TrustbirdServiceProvider extends ServiceProvider
             'risk' => [
                 'contract' => HasRisks::class,
                 'default' => Risk::class,
+            ],
+            'policy' => [
+                'contract' => HasPolicies::class,
+                'default' => Policy::class,
             ],
         ];
 

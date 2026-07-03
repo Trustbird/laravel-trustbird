@@ -47,80 +47,86 @@ The following statuses are supported via the `PolicyVersionStatus` enum:
 
 ## Creating a policy
 
-`CreatePolicy` registers a policy and its first draft version.
+Register a policy and its first draft version through the facade.
 
 ```php
-use Trustbird\Policies\Actions\CreatePolicy;
+use Trustbird\Facades\Trustbird;
 
-$policy = app(CreatePolicy::class)->handle([
-    'title' => 'Information Security Policy',
-    'content' => 'All employees must protect company data.',
-    'owner_id' => $owner->id,
-    'reviewer_id' => $reviewer->id,
-]);
+$policy = Trustbird::policies()->create(
+    title: 'Information Security Policy',
+    content: 'All employees must protect company data.',
+    ownerId: $owner->id,
+    reviewerId: $reviewer->id,
+);
 ```
 
 ## Updating a policy
 
-Use `UpdatePolicy` to change policy metadata such as title, owner, or reviewer.
+Change policy metadata such as title, owner, or reviewer.
 
 ```php
-use Trustbird\Policies\Actions\UpdatePolicy;
+use Trustbird\Facades\Trustbird;
 
-app(UpdatePolicy::class)->handle($policy, [
-    'title' => 'Information Security and Privacy Policy',
-    'reviewer_id' => $newReviewer->id,
-]);
+Trustbird::policies()->update(
+    policy: $policy,
+    title: 'Information Security and Privacy Policy',
+    reviewerId: $newReviewer->id,
+);
 ```
 
 ## Drafting a new version
 
-Use `DraftPolicyVersion` to start a new draft based on the next version number.
+Start a new draft based on the next version number.
 
 ```php
-use Trustbird\Policies\Actions\DraftPolicyVersion;
+use Trustbird\Facades\Trustbird;
 
-$version = app(DraftPolicyVersion::class)->handle($policy, [
-    'content' => 'Updated policy text.',
-    'change_summary' => 'Annual review updates',
-]);
+$version = Trustbird::policies()->draftVersion(
+    policy: $policy,
+    content: 'Updated policy text.',
+    notes: 'Annual review updates',
+);
 ```
 
 ## Updating a draft version
 
-Use `UpdatePolicyVersion` to edit draft content. Published and superseded versions cannot be changed.
+Edit draft content. Published and superseded versions cannot be changed.
 
 ```php
-use Trustbird\Policies\Actions\UpdatePolicyVersion;
+use Trustbird\Facades\Trustbird;
 
-app(UpdatePolicyVersion::class)->handle($version, [
-    'content' => 'Revised draft content.',
-]);
+Trustbird::policies()->updateVersion(
+    version: $version,
+    content: 'Revised draft content.',
+);
 ```
 
 ## Publishing a version
 
-Publication is always explicit. `PublishPolicyVersion` activates a draft version and supersedes the previously published version, if any.
+Publication is always explicit. It activates a draft version and supersedes the previously published version, if any.
 
 ```php
-use Trustbird\Policies\Actions\PublishPolicyVersion;
+use Trustbird\Facades\Trustbird;
 
-app(PublishPolicyVersion::class)->handle($policy, $version, [
-    'published_by_id' => $publisher->id,
-]);
+Trustbird::policies()->publishVersion(
+    policy: $policy,
+    version: $version,
+    publishedById: $publisher->id,
+);
 ```
 
 ## Reviewing a policy
 
-Use `ReviewPolicy` to record a review and schedule the next one.
+Record a review and schedule the next one.
 
 ```php
-use Trustbird\Policies\Actions\ReviewPolicy;
+use Trustbird\Facades\Trustbird;
 
-app(ReviewPolicy::class)->handle($policy, [
-    'reviewer_id' => $reviewer->id,
-    'next_review_at' => now()->addYear(),
-]);
+Trustbird::policies()->review(
+    policy: $policy,
+    reviewerId: $reviewer->id,
+    nextReviewAt: now()->addYear(),
+);
 ```
 
 ## Lifecycle helpers

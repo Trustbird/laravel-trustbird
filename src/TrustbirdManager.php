@@ -6,6 +6,7 @@ namespace Trustbird;
 
 use Trustbird\Assets\Managers\AssetsManager;
 use Trustbird\People\Managers\PeopleManager;
+use Trustbird\Policies\Managers\PoliciesManager;
 use Trustbird\Risks\Managers\RisksManager;
 use Trustbird\Teams\Managers\TeamsManager;
 use Trustbird\Workspaces\Managers\WorkspacesManager;
@@ -35,5 +36,10 @@ final class TrustbirdManager
     public function risks(): RisksManager
     {
         return new RisksManager;
+    }
+
+    public function policies(): PoliciesManager
+    {
+        return new PoliciesManager;
     }
 }

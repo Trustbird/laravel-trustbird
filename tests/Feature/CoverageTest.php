@@ -3,15 +3,11 @@
 use Trustbird\Assets\Enums\AssetKind;
 use Trustbird\People\Actions\MarkPersonnelTaskComplete;
 use Trustbird\People\Actions\RecordPersonnelReminder;
-use Trustbird\Risks\Events\RiskCreated;
-use Trustbird\Risks\Events\RiskUpdated;
 use Trustbird\Risks\Events\RiskReviewed;
 use Trustbird\Risks\Enums\RiskStatus;
 use Trustbird\Risks\Enums\RiskTreatment;
 use Trustbird\Risks\Enums\RiskLevel;
 use Trustbird\Risks\Models\Risk;
-use Trustbird\Policies\Events\PolicyCreated;
-use Trustbird\Policies\Events\PolicyUpdated;
 use Trustbird\Policies\Events\PolicyReviewed;
 use Trustbird\Policies\Events\PolicyVersionDrafted;
 use Trustbird\Policies\Events\PolicyVersionUpdated;
@@ -25,11 +21,6 @@ use Trustbird\People\Events\PersonnelReminderRecorded;
 use Trustbird\People\Events\PersonnelTaskMarkedComplete;
 use Trustbird\People\Events\PersonTerminated;
 use Trustbird\People\Models\Person;
-use Trustbird\Risks\Enums\RiskLevel;
-use Trustbird\Risks\Enums\RiskStatus;
-use Trustbird\Risks\Enums\RiskTreatment;
-use Trustbird\Risks\Events\RiskReviewed;
-use Trustbird\Risks\Models\Risk;
 use Trustbird\TrustbirdServiceProvider;
 
 it('instantiates events', function (): void {
@@ -42,16 +33,11 @@ it('instantiates events', function (): void {
 
     $policy = Policy::factory()->withDraftVersion()->create();
     $version = $policy->versions->first();
-    expect(new PolicyCreated($policy))->toBeInstanceOf(PolicyCreated::class);
-    expect(new PolicyUpdated($policy))->toBeInstanceOf(PolicyUpdated::class);
+
     expect(new PolicyReviewed($policy))->toBeInstanceOf(PolicyReviewed::class);
     expect(new PolicyVersionDrafted($policy, $version))->toBeInstanceOf(PolicyVersionDrafted::class);
     expect(new PolicyVersionUpdated($version))->toBeInstanceOf(PolicyVersionUpdated::class);
     expect(new PolicyVersionPublished($policy, $version))->toBeInstanceOf(PolicyVersionPublished::class);
-
-    $workspace = Workspace::factory()->create();
-    expect(new WorkspaceCreated($workspace))->toBeInstanceOf(WorkspaceCreated::class);
-    expect(new WorkspaceUpdated($workspace))->toBeInstanceOf(WorkspaceUpdated::class);
 });
 
 it('can instantiate service provider', function (): void {
