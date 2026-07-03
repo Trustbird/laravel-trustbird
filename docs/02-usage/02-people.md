@@ -46,51 +46,51 @@ Pending → Active → Offboarding → Terminated
 ## Creating a person
 
 ```php
-use Trustbird\People\Actions\CreatePerson;
+use Trustbird\Facades\Trustbird;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 
-$person = app(CreatePerson::class)->handle([
-    'first_name' => 'Jane',
-    'last_name' => 'Doe',
-    'email' => 'jane@example.com',
-    'employment_type' => EmploymentType::Employee,
-    'employment_status' => EmploymentStatus::Active,
-]);
+$person = Trustbird::people()->create(
+    firstName: 'Jane',
+    lastName: 'Doe',
+    email: 'jane@example.com',
+    employmentType: EmploymentType::Employee,
+    employmentStatus: EmploymentStatus::Active,
+);
 ```
 
 ## Terminating a person
 
 ```php
-use Trustbird\People\Actions\TerminatePerson;
+use Trustbird\Facades\Trustbird;
 
-app(TerminatePerson::class)->handle($person);
+Trustbird::people()->terminate($person);
 ```
 
 ## Completing tasks and reminders
 
-You can mark tasks as complete and record reminders for personnel using dedicated actions.
+You can mark tasks as complete and record reminders for personnel using the `People` manager.
 
 ### Mark task complete
 
 ```php
-use Trustbird\People\Actions\MarkPersonnelTaskComplete;
+use Trustbird\Facades\Trustbird;
 
-app(MarkPersonnelTaskComplete::class)->handle($person, [
-    'task' => 'equipment_provisioning',
-    'completed_at' => now(),
-]);
+Trustbird::people()->markTaskComplete($person, 
+    task: 'equipment_provisioning',
+    completedAt: now(),
+);
 ```
 
 ### Record reminder
 
 ```php
-use Trustbird\People\Actions\RecordPersonnelReminder;
+use Trustbird\Facades\Trustbird;
 
-app(RecordPersonnelReminder::class)->handle($person, [
-    'type' => 'contract_renewal',
-    'remind_at' => now()->addYear(),
-]);
+Trustbird::people()->recordReminder($person, 
+    type: 'contract_renewal',
+    remindAt: now()->addYear(),
+);
 ```
 
 ## Future roadmap

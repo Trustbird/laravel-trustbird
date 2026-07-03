@@ -6,7 +6,7 @@ namespace Trustbird\Workspaces\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Trustbird\Workspaces\Models\Workspace;
+use Trustbird\Workspaces\Contracts\HasWorkspaces;
 
 trait BelongsToWorkspace
 {
@@ -18,7 +18,9 @@ trait BelongsToWorkspace
                     throw new \RuntimeException('A workspace_id is required when multi-tenancy is enabled.');
                 }
 
-                $model->workspace_id = Workspace::query()->first()?->id;
+                /** @var Model $workspaceModel */
+                $workspaceModel = app(HasWorkspaces::class);
+                $model->workspace_id = $workspaceModel->newQuery()->first()?->id;
             }
         });
     }
@@ -30,6 +32,6 @@ trait BelongsToWorkspace
 
     public function workspace(): BelongsTo
     {
-        return $this->belongsTo(Workspace::class);
+        return $this->belongsTo(app(HasWorkspaces::class)::class);
     }
 }

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Trustbird\Workspaces\Commands;
 
 use Illuminate\Console\Command;
-use Trustbird\Workspaces\Models\Workspace;
+use Illuminate\Database\Eloquent\Model;
+use Trustbird\Workspaces\Contracts\HasWorkspaces;
 
 final class InstallCommand extends Command
 {
@@ -17,9 +18,12 @@ final class InstallCommand extends Command
     {
         $this->info('Installing Trustbird...');
 
-        if (Workspace::query()->count() === 0) {
-            Workspace::query()->create([
-                'name' => 'Default Workspace',
+        /** @var Model $model */
+        $model = app(HasWorkspaces::class);
+
+        if ($model->newQuery()->count() === 0) {
+            $model->newQuery()->create([
+                'name' => 'Default HasWorkspaces',
                 'slug' => 'default',
                 'description' => 'Automatically created default workspace',
             ]);

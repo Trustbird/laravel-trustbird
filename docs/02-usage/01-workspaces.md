@@ -13,22 +13,24 @@ A workspace contains:
 
 ## Creating a workspace
 
-```php
-use Trustbird\Workspaces\Actions\CreateWorkspace;
+To create a workspace, use the `Trustbird` facade.
 
-$workspace = app(CreateWorkspace::class)->handle([
-    'name' => 'Acme Corp',
-    'slug' => 'acme-corp',
-    'description' => 'Main workspace for Acme Corp',
-]);
+```php
+use Trustbird\Facades\Trustbird;
+
+$workspace = Trustbird::workspaces()->create(
+    name: 'Acme Corp',
+    slug: 'acme-corp',
+    description: 'Main workspace for Acme Corp',
+);
 ```
 
 ## Updating a workspace
 
 ```php
-use Trustbird\Workspaces\Actions\UpdateWorkspace;
+use Trustbird\Facades\Trustbird;
 
-$workspace = app(UpdateWorkspace::class)->handle($workspace, [
+$workspace = Trustbird::workspaces()->update($workspace, [
     'name' => 'Acme Corporation',
 ]);
 ```

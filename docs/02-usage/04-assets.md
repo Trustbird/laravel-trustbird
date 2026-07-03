@@ -33,30 +33,30 @@ The following types are supported via the `AssetKind` enum:
 
 ## Creating an asset
 
-To create an asset, use the `CreateAsset` action.
+To create an asset, use the `Trustbird` facade.
 
 ```php
-use Trustbird\Assets\Actions\CreateAsset;
+use Trustbird\Facades\Trustbird;
 use Trustbird\Assets\Enums\AssetKind;
 
-$asset = app(CreateAsset::class)->handle([
-    'name' => 'MacBook Pro 16" - Jane Doe',
-    'kind' => AssetKind::Device,
-    'owner_id' => $person->id,
-    'provider_name' => 'Apple',
-    'criticality' => 'high',
-    'contains_personal_data' => true,
-]);
+$asset = Trustbird::assets()->create(
+    name: 'MacBook Pro 16" - Jane Doe',
+    kind: AssetKind::Device,
+    ownerId: $person->id,
+    providerName: 'Apple',
+    criticality: 'high',
+    containsPersonalData: true,
+);
 ```
 
 ## Updating an asset
 
-Use the `UpdateAsset` action to change details of an existing asset.
+Use the `Trustbird` facade to change details of an existing asset.
 
 ```php
-use Trustbird\Assets\Actions\UpdateAsset;
+use Trustbird\Facades\Trustbird;
 
-app(UpdateAsset::class)->handle($asset, [
+Trustbird::assets()->update($asset, [
     'name' => 'MacBook Pro 16" - Jane Doe (Replaced)',
     'status' => 'retired',
     'retired_at' => now(),
@@ -65,12 +65,12 @@ app(UpdateAsset::class)->handle($asset, [
 
 ## Deleting an asset
 
-If an asset needs to be completely removed from the system, this can be done via the `DeleteAsset` action.
+If an asset needs to be completely removed from the system, this can be done via the `Trustbird` facade.
 
 ```php
-use Trustbird\Assets\Actions\DeleteAsset;
+use Trustbird\Facades\Trustbird;
 
-app(DeleteAsset::class)->handle($asset);
+Trustbird::assets()->delete($asset);
 ```
 
 ## Data carriers

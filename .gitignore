@@ -7,6 +7,7 @@
 
 .phpunit.result.cache
 .phpunit.cache
+.output.txt
 
 coverage
 build
@@ -20,3 +21,4 @@ build
 node_modules
 
 composer.lock
+coverage.txt

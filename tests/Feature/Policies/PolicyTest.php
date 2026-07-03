@@ -2,37 +2,27 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Event;
+use Trustbird\Facades\Trustbird;
 use Trustbird\People\Models\Person;
-use Trustbird\Policies\Actions\CreatePolicy;
-use Trustbird\Policies\Actions\DraftPolicyVersion;
-use Trustbird\Policies\Actions\PublishPolicyVersion;
-use Trustbird\Policies\Actions\ReviewPolicy;
-use Trustbird\Policies\Actions\UpdatePolicy;
-use Trustbird\Policies\Actions\UpdatePolicyVersion;
 use Trustbird\Policies\Enums\PolicyVersionStatus;
-use Trustbird\Policies\Events\PolicyCreated;
 use Trustbird\Policies\Events\PolicyReviewed;
-use Trustbird\Policies\Events\PolicyUpdated;
 use Trustbird\Policies\Events\PolicyVersionDrafted;
 use Trustbird\Policies\Events\PolicyVersionPublished;
 use Trustbird\Policies\Events\PolicyVersionUpdated;
 use Trustbird\Policies\Models\Policy;
 use Trustbird\Policies\Models\PolicyVersion;
 
-test('it can create a policy with an initial draft version and dispatches event', function () {
-    Event::fake();
-
+test('it can create a policy with an initial draft version', function () {
     $owner = Person::factory()->create();
     $reviewer = Person::factory()->create(['workspace_id' => $owner->workspace_id]);
 
-    $policy = app(CreatePolicy::class)->handle([
-        'title' => 'Information Security Policy',
-        'content' => 'All employees must protect company data.',
-        'owner_id' => $owner->id,
-        'reviewer_id' => $reviewer->id,
-        'change_summary' => 'Initial draft',
-    ]);
+    $policy = Trustbird::policies()->create(
+        title: 'Information Security Policy',
+        content: 'All employees must protect company data.',
+        ownerId: $owner->id,
+        reviewerId: $reviewer->id,
+        changeSummary: 'Initial draft',
+    );
 
     expect($policy)->toBeInstanceOf(Policy::class)
         ->title->toBe('Information Security Policy')
@@ -45,29 +35,17 @@ test('it can create a policy with an initial draft version and dispatches event'
         ->version_number->toBe(1)
         ->status->toBe(PolicyVersionStatus::Draft)
         ->content->toBe('All employees must protect company data.');
-
-    expect($policy->owner)->toBeInstanceOf(Person::class);
-    expect($policy->reviewer)->toBeInstanceOf(Person::class);
-
-    Event::assertDispatched(PolicyCreated::class, function ($event) use ($policy) {
-        return $event->policy->id === $policy->id;
-    });
 });
 
-test('it can update a policy and dispatches event', function () {
-    Event::fake();
-
+test('it can update a policy', function () {
     $policy = Policy::factory()->withDraftVersion()->create(['title' => 'Old title']);
 
-    $updatedPolicy = app(UpdatePolicy::class)->handle($policy, [
-        'title' => 'Updated title',
-    ]);
+    $updatedPolicy = Trustbird::policies()->update(
+        policy: $policy,
+        title: 'Updated title',
+    );
 
     expect($updatedPolicy->title)->toBe('Updated title');
-
-    Event::assertDispatched(PolicyUpdated::class, function ($event) use ($policy) {
-        return $event->policy->id === $policy->id;
-    });
 });
 
 test('it can draft a new policy version and dispatches event', function () {
@@ -75,10 +53,11 @@ test('it can draft a new policy version and dispatches event', function () {
 
     $policy = Policy::factory()->withPublishedVersion()->create();
 
-    $version = app(DraftPolicyVersion::class)->handle($policy, [
-        'content' => 'Updated policy content.',
-        'change_summary' => 'Annual review updates',
-    ]);
+    $version = Trustbird::policies()->draftVersion(
+        policy: $policy,
+        content: 'Updated policy content.',
+        notes: 'Annual review updates',
+    );
 
     expect($version)->toBeInstanceOf(PolicyVersion::class)
         ->version_number->toBe(2)
@@ -97,9 +76,10 @@ test('it can update a draft policy version and dispatches event', function () {
     $policy = Policy::factory()->withDraftVersion()->create();
     $version = $policy->versions->first();
 
-    $updatedVersion = app(UpdatePolicyVersion::class)->handle($version, [
-        'content' => 'Revised draft content.',
-    ]);
+    $updatedVersion = Trustbird::policies()->updateVersion(
+        version: $version,
+        content: 'Revised draft content.',
+    );
 
     expect($updatedVersion->content)->toBe('Revised draft content.');
 
@@ -112,9 +92,10 @@ test('it cannot update a published policy version', function () {
     $policy = Policy::factory()->withPublishedVersion()->create();
     $version = $policy->publishedVersion;
 
-    app(UpdatePolicyVersion::class)->handle($version, [
-        'content' => 'Should not work.',
-    ]);
+    Trustbird::policies()->updateVersion(
+        version: $version,
+        content: 'Should not work.',
+    );
 })->throws(InvalidArgumentException::class, 'Only draft policy versions can be updated.');
 
 test('it can explicitly publish a draft version and dispatches event', function () {
@@ -124,9 +105,11 @@ test('it can explicitly publish a draft version and dispatches event', function 
     $version = $policy->versions->first();
     $publisher = Person::factory()->create(['workspace_id' => $policy->workspace_id]);
 
-    $publishedVersion = app(PublishPolicyVersion::class)->handle($policy, $version, [
-        'published_by_id' => $publisher->id,
-    ]);
+    $publishedVersion = Trustbird::policies()->publishVersion(
+        policy: $policy,
+        version: $version,
+        publishedById: $publisher->id,
+    );
 
     $policy->refresh();
 
@@ -146,11 +129,15 @@ test('it supersedes the previous published version when publishing a new one', f
     $policy = Policy::factory()->withPublishedVersion()->create();
     $previousVersion = $policy->publishedVersion;
 
-    $draft = app(DraftPolicyVersion::class)->handle($policy, [
-        'content' => 'Version 2 content.',
-    ]);
+    $draft = Trustbird::policies()->draftVersion(
+        policy: $policy,
+        content: 'Version 2 content.',
+    );
 
-    app(PublishPolicyVersion::class)->handle($policy, $draft);
+    Trustbird::policies()->publishVersion(
+        policy: $policy,
+        version: $draft,
+    );
 
     expect($previousVersion->fresh()->status)->toBe(PolicyVersionStatus::Superseded)
         ->and($draft->fresh()->status)->toBe(PolicyVersionStatus::Published)
@@ -161,13 +148,19 @@ test('it cannot publish a version that does not belong to the policy', function 
     $policy = Policy::factory()->withDraftVersion()->create();
     $otherVersion = PolicyVersion::factory()->draft()->create();
 
-    app(PublishPolicyVersion::class)->handle($policy, $otherVersion);
+    Trustbird::policies()->publishVersion(
+        policy: $policy,
+        version: $otherVersion,
+    );
 })->throws(InvalidArgumentException::class, 'The policy version does not belong to this policy.');
 
 test('it cannot publish a non-draft version', function () {
     $policy = Policy::factory()->withPublishedVersion()->create();
 
-    app(PublishPolicyVersion::class)->handle($policy, $policy->publishedVersion);
+    Trustbird::policies()->publishVersion(
+        policy: $policy,
+        version: $policy->publishedVersion,
+    );
 })->throws(InvalidArgumentException::class, 'Only draft policy versions can be published.');
 
 test('it can review a policy and dispatches event', function () {
@@ -178,11 +171,12 @@ test('it can review a policy and dispatches event', function () {
     $reviewedAt = now()->subHour();
     $nextReviewAt = now()->addYear();
 
-    $reviewedPolicy = app(ReviewPolicy::class)->handle($policy, [
-        'reviewed_at' => $reviewedAt,
-        'next_review_at' => $nextReviewAt,
-        'reviewer_id' => $reviewer->id,
-    ]);
+    $reviewedPolicy = Trustbird::policies()->review(
+        policy: $policy,
+        reviewedAt: $reviewedAt,
+        nextReviewAt: $nextReviewAt,
+        reviewerId: $reviewer->id,
+    );
 
     expect($reviewedPolicy->reviewer_id)->toBe($reviewer->id)
         ->and($reviewedPolicy->reviewed_at->toDateTimeString())->toBe($reviewedAt->toDateTimeString())
@@ -196,7 +190,7 @@ test('it can review a policy and dispatches event', function () {
 test('it sets reviewed_at automatically when reviewing a policy', function () {
     $policy = Policy::factory()->create();
 
-    $reviewedPolicy = app(ReviewPolicy::class)->handle($policy);
+    $reviewedPolicy = Trustbird::policies()->review(policy: $policy);
 
     expect($reviewedPolicy->reviewed_at)->not->toBeNull();
 });

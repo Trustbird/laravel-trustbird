@@ -11,7 +11,14 @@ No code may be merged unless test coverage remains 100%.
 Use:
 
 - PestPHP
+- Laravel Pint
 - Laravel testing utilities
+
+## Code quality
+
+Before you run any tests, you should run:
+
+`./vendor/bin/pint --dirty --parallel`
 
 ## Coverage policy
 
@@ -75,6 +82,19 @@ Avoid testing implementation details unless necessary.
 Use factories for test data whenever possible.
 
 Avoid manually creating large object graphs inside tests.
+
+## Events
+
+When testing events:
+
+- For standard CRUD operations (create, update, delete), assert on the built-in Eloquent events:
+  ```php
+  Event::assertDispatched("eloquent.created: " . Person::class);
+  ```
+- For semantic domain events (e.g. `PersonTerminated`), assert on the specific event class:
+  ```php
+  Event::assertDispatched(PersonTerminated::class);
+  ```
 
 ## Confidence rule
 
