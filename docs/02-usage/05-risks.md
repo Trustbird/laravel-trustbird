@@ -57,31 +57,31 @@ Likelihood and impact use the `RiskLevel` enum:
 
 ## Creating a risk
 
-To register a risk, use the `CreateRisk` action.
+To register a risk, use the `Trustbird` facade.
 
 ```php
-use Trustbird\Risks\Actions\CreateRisk;
+use Trustbird\Facades\Trustbird;
 use Trustbird\Risks\Enums\RiskLevel;
 
-$risk = app(CreateRisk::class)->handle([
-    'title' => 'Laptop theft during travel',
-    'description' => 'Employees travel with company laptops that may be lost or stolen.',
-    'owner_id' => $person->id,
-    'likelihood' => RiskLevel::Medium,
-    'impact' => RiskLevel::High,
-]);
+$risk = Trustbird::risks()->create(
+    title: 'Laptop theft during travel',
+    description: 'Employees travel with company laptops that may be lost or stolen.',
+    ownerId: $person->id,
+    likelihood: RiskLevel::Medium,
+    impact: RiskLevel::High,
+);
 ```
 
 ## Updating a risk
 
-Use the `UpdateRisk` action to change details of an existing risk.
+Use the `Trustbird` facade to change details of an existing risk.
 
 ```php
-use Trustbird\Risks\Actions\UpdateRisk;
+use Trustbird\Facades\Trustbird;
 use Trustbird\Risks\Enums\RiskStatus;
 use Trustbird\Risks\Enums\RiskTreatment;
 
-app(UpdateRisk::class)->handle($risk, [
+Trustbird::risks()->update($risk, [
     'status' => RiskStatus::BeingAddressed,
     'treatment' => RiskTreatment::Reduce,
 ]);
@@ -89,13 +89,13 @@ app(UpdateRisk::class)->handle($risk, [
 
 ## Reviewing a risk
 
-Use the `ReviewRisk` action to record a review. This sets `reviewed_at` automatically and can update status, treatment, likelihood, impact, and the next review date.
+Use the `Trustbird` facade to record a review. This sets `reviewed_at` automatically and can update status, treatment, likelihood, impact, and the next review date.
 
 ```php
-use Trustbird\Risks\Actions\ReviewRisk;
+use Trustbird\Facades\Trustbird;
 use Trustbird\Risks\Enums\RiskStatus;
 
-app(ReviewRisk::class)->handle($risk, [
+Trustbird::risks()->review($risk, [
     'status' => RiskStatus::Accepted,
     'next_review_at' => now()->addMonths(3),
 ]);

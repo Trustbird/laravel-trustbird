@@ -7,20 +7,18 @@ Business logic should remain isolated, testable, and independent from presentati
 ## Layers
 
 The preferred dependency flow is:
-
-Application entry points
-
+```text
+Developer API / Application entry points
 ↓
-
-Actions
-
+Typed managers
 ↓
-
-Domain
-
+Actions (for complex logic) OR Domain Models (for simple CRUD)
 ↓
-
 Persistence
+```
+The public Developer API is defined in `.ai/developer-api.md`.
+
+Typed managers expose stable domain operations through the `Trustbird` facade or the `trustbird()` helper. Simple CRUD operations (Create, Update, Delete) are handled directly by Managers using Eloquent models. Actions are reserved for more complex domain operations that involve business logic, side effects, or multiple steps.
 
 ## Business logic
 
@@ -35,7 +33,8 @@ Business logic never belongs in:
 
 Business logic belongs in:
 
-- actions
+- actions (for operations spanning multiple steps or side effects)
+- typed managers (for coordination and simple orchestration)
 - services
 - domain objects
 - value objects
@@ -50,13 +49,13 @@ Models must not become business logic containers.
 
 ## Actions
 
-Actions perform business operations.
+Actions perform complex business operations.
 
 One action performs one task.
 
 Actions should be easy to test directly.
 
-Every Action must dispatch a corresponding Event upon completion.
+Simple CRUD operations do not require dedicated Action classes; Managers handle these directly via Eloquent. Every domain operation must trigger a corresponding Event. Standard CRUD operations rely on Laravel's built-in Eloquent events, while semantic domain events are explicitly dispatched by Actions.
 
 ## Services
 
@@ -76,9 +75,15 @@ Listeners should be small and focused.
 
 Use contracts for extension points and replaceable behaviour.
 
+To avoid naming conflicts with concrete models, interfaces for domain models follow the `Has{Model}s` (plural) convention (e.g., `HasPeople`, `HasAssets`).
+
 Avoid contracts for everything by default.
 
 Only introduce a contract when there is a clear need for substitution, extension, or external implementation.
+
+## Concerns
+
+Traits that provide domain functionality to models follow the `InteractsWith{Model}s` (plural) convention (e.g., `InteractsWithPeople`, `InteractsWithAssets`).
 
 ## Database
 

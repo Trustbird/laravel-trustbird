@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Event;
+use Trustbird\Database\Factories\Risk\RiskFactory;
+use Trustbird\Facades\Trustbird;
 use Trustbird\People\Models\Person;
-use Trustbird\Risks\Actions\CreateRisk;
-use Trustbird\Risks\Actions\ReviewRisk;
-use Trustbird\Risks\Actions\UpdateRisk;
 use Trustbird\Risks\Enums\RiskLevel;
 use Trustbird\Risks\Enums\RiskStatus;
 use Trustbird\Risks\Enums\RiskTreatment;
-use Trustbird\Risks\Events\RiskCreated;
 use Trustbird\Risks\Events\RiskReviewed;
-use Trustbird\Risks\Events\RiskUpdated;
 use Trustbird\Risks\Models\Risk;
 
 test('it can create a risk and dispatches event', function () {
@@ -20,14 +18,13 @@ test('it can create a risk and dispatches event', function () {
 
     $person = Person::factory()->create();
 
-    $action = new CreateRisk();
-    $risk = $action->handle([
-        'title' => 'Laptop theft during travel',
-        'description' => 'Employees travel with company laptops that may be lost or stolen.',
-        'owner_id' => $person->id,
-        'likelihood' => RiskLevel::Medium,
-        'impact' => RiskLevel::High,
-    ]);
+    $risk = Trustbird::risks()->create(
+        title: 'Laptop theft during travel',
+        description: 'Employees travel with company laptops that may be lost or stolen.',
+        ownerId: $person->id,
+        likelihood: RiskLevel::Medium,
+        impact: RiskLevel::High,
+    );
 
     expect($risk)->toBeInstanceOf(Risk::class)
         ->title->toBe('Laptop theft during travel')
@@ -38,9 +35,7 @@ test('it can create a risk and dispatches event', function () {
 
     expect($risk->owner)->toBeInstanceOf(Person::class);
 
-    Event::assertDispatched(RiskCreated::class, function ($event) use ($risk) {
-        return $event->risk->id === $risk->id;
-    });
+    Event::assertDispatched('eloquent.created: '.Risk::class);
 });
 
 test('it can update a risk and dispatches event', function () {
@@ -51,20 +46,17 @@ test('it can update a risk and dispatches event', function () {
         'status' => RiskStatus::Open,
     ]);
 
-    $action = new UpdateRisk();
-    $updatedRisk = $action->handle($risk, [
-        'title' => 'Updated title',
-        'status' => RiskStatus::BeingAddressed,
-        'treatment' => RiskTreatment::Reduce,
-    ]);
+    $updatedRisk = Trustbird::risks()->update($risk,
+        title: 'Updated title',
+        status: RiskStatus::BeingAddressed,
+        treatment: RiskTreatment::Reduce,
+    );
 
     expect($updatedRisk->title)->toBe('Updated title')
         ->and($updatedRisk->status)->toBe(RiskStatus::BeingAddressed)
         ->and($updatedRisk->treatment)->toBe(RiskTreatment::Reduce);
 
-    Event::assertDispatched(RiskUpdated::class, function ($event) use ($risk) {
-        return $event->risk->id === $risk->id;
-    });
+    Event::assertDispatched('eloquent.updated: '.Risk::class);
 });
 
 test('it can review a risk and dispatches event', function () {
@@ -74,15 +66,14 @@ test('it can review a risk and dispatches event', function () {
     $reviewedAt = now()->subHour();
     $nextReviewAt = now()->addMonths(3);
 
-    $action = new ReviewRisk();
-    $reviewedRisk = $action->handle($risk, [
-        'reviewed_at' => $reviewedAt,
-        'next_review_at' => $nextReviewAt,
-        'status' => RiskStatus::Accepted,
-        'treatment' => RiskTreatment::Accept,
-        'likelihood' => RiskLevel::Low,
-        'impact' => RiskLevel::Medium,
-    ]);
+    $reviewedRisk = Trustbird::risks()->review($risk,
+        reviewedAt: $reviewedAt,
+        nextReviewAt: $nextReviewAt,
+        status: RiskStatus::Accepted,
+        treatment: RiskTreatment::Accept,
+        likelihood: RiskLevel::Low,
+        impact: RiskLevel::Medium,
+    );
 
     expect($reviewedRisk->status)->toBe(RiskStatus::Accepted)
         ->and($reviewedRisk->treatment)->toBe(RiskTreatment::Accept)
@@ -99,9 +90,9 @@ test('it can review a risk and dispatches event', function () {
 test('it sets reviewed_at automatically when reviewing a risk', function () {
     $risk = Risk::factory()->create();
 
-    $reviewedRisk = app(ReviewRisk::class)->handle($risk, [
-        'status' => RiskStatus::UnderReview,
-    ]);
+    $reviewedRisk = Trustbird::risks()->review($risk,
+        status: RiskStatus::UnderReview,
+    );
 
     expect($reviewedRisk->reviewed_at)->not->toBeNull();
 });
@@ -148,8 +139,8 @@ test('it covers all risk model methods', function () {
     expect($risk->metadata)->toBeArray()
         ->and($risk->metadata['source'])->toBe('team workshop');
 
-    expect($risk->reviewed_at)->toBeInstanceOf(\Carbon\CarbonInterface::class);
-    expect($risk->next_review_at)->toBeInstanceOf(\Carbon\CarbonInterface::class);
+    expect($risk->reviewed_at)->toBeInstanceOf(CarbonInterface::class);
+    expect($risk->next_review_at)->toBeInstanceOf(CarbonInterface::class);
 
-    expect(Risk::newFactory())->toBeInstanceOf(\Trustbird\Database\Factories\Risk\RiskFactory::class);
+    expect(Risk::newFactory())->toBeInstanceOf(RiskFactory::class);
 });

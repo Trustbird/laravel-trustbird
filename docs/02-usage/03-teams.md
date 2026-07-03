@@ -16,21 +16,21 @@ A team contains:
 ## Creating a team
 
 ```php
-use Trustbird\Teams\Actions\CreateTeam;
+use Trustbird\Facades\Trustbird;
 
-$team = app(CreateTeam::class)->handle([
-    'name' => 'Engineering',
-    'description' => 'The software engineering department.',
-    'owner_id' => $person->id,
-]);
+$team = Trustbird::teams()->create(
+    name: 'Engineering',
+    description: 'The software engineering department.',
+    ownerId: $person->id,
+);
 ```
 
 ## Updating a team
 
 ```php
-use Trustbird\Teams\Actions\UpdateTeam;
+use Trustbird\Facades\Trustbird;
 
-app(UpdateTeam::class)->handle($team, [
+Trustbird::teams()->update($team, [
     'name' => 'Product Engineering',
 ]);
 ```
@@ -38,37 +38,37 @@ app(UpdateTeam::class)->handle($team, [
 ## Deleting a team
 
 ```php
-use Trustbird\Teams\Actions\DeleteTeam;
+use Trustbird\Facades\Trustbird;
 
-app(DeleteTeam::class)->handle($team);
+Trustbird::teams()->delete($team);
 ```
 
 ## Managing membership
 
-You can add or remove members from a team using dedicated actions. These actions support single individuals or groups of people.
+You can add or remove members from a team using the `Teams` manager. These actions support single individuals or groups of people.
 
 ### Adding members
 
 ```php
-use Trustbird\Teams\Actions\AddMemberToTeam;
+use Trustbird\Facades\Trustbird;
 
 // Add a single person by object or ID
-app(AddMemberToTeam::class)->handle($team, $person);
+Trustbird::teams()->addMember($team, $person);
 
 // Add multiple people at once
-app(AddMemberToTeam::class)->handle($team, [$person1, $person2]);
+Trustbird::teams()->addMember($team, [$person1, $person2]);
 ```
 
 ### Removing members
 
 ```php
-use Trustbird\Teams\Actions\RemoveMemberFromTeam;
+use Trustbird\Facades\Trustbird;
 
 // Remove a single person
-app(RemoveMemberFromTeam::class)->handle($team, $person);
+Trustbird::teams()->removeMember($team, $person);
 
 // Remove multiple people
-app(RemoveMemberFromTeam::class)->handle($team, [$person1, $person2]);
+Trustbird::teams()->removeMember($team, [$person1, $person2]);
 ```
 
 ### Checking membership

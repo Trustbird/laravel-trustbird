@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Trustbird\People\Actions;
 
+use Trustbird\People\Contracts\HasPeople;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Events\PersonTerminated;
-use Trustbird\People\Models\Person;
 
 final readonly class TerminatePerson
 {
-    public function handle(Person $person): Person
+    public function handle(HasPeople $person): HasPeople
     {
         $person->update([
             'employment_status' => EmploymentStatus::Terminated,

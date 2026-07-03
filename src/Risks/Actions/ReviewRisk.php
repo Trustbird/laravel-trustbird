@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Trustbird\Risks\Actions;
 
+use Trustbird\Risks\Contracts\HasRisks;
+use Trustbird\Risks\Enums\RiskLevel;
+use Trustbird\Risks\Enums\RiskStatus;
+use Trustbird\Risks\Enums\RiskTreatment;
 use Trustbird\Risks\Events\RiskReviewed;
-use Trustbird\Risks\Models\Risk;
 
 final readonly class ReviewRisk
 {
@@ -13,13 +16,13 @@ final readonly class ReviewRisk
      * @param array{
      *     reviewed_at?: \DateTimeInterface|null,
      *     next_review_at?: \DateTimeInterface|null,
-     *     status?: string|\Trustbird\Risks\Enums\RiskStatus,
-     *     treatment?: string|\Trustbird\Risks\Enums\RiskTreatment|null,
-     *     likelihood?: string|\Trustbird\Risks\Enums\RiskLevel|null,
-     *     impact?: string|\Trustbird\Risks\Enums\RiskLevel|null,
+     *     status?: string|RiskStatus,
+     *     treatment?: string|RiskTreatment|null,
+     *     likelihood?: string|RiskLevel|null,
+     *     impact?: string|RiskLevel|null,
      * } $attributes
      */
-    public function handle(Risk $risk, array $attributes = []): Risk
+    public function handle(HasRisks $risk, array $attributes = []): HasRisks
     {
         $risk->update([
             ...$attributes,

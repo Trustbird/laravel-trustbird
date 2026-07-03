@@ -2,8 +2,8 @@
 
 ## Requirements
 
-* PHP 8.3 or higher
-* Laravel 12
+* Laravel 12 with PHP 8.2 or higher
+* Laravel 13 with PHP 8.3 or higher
 
 ## Install the package
 

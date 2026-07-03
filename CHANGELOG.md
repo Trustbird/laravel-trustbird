@@ -8,11 +8,30 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ### Added
 
-- **Risks Module**: Initial implementation including `Risk` model, migration, factory, and actions.
-- **Risks Module**: Plain-language lifecycle statuses and treatment options via `RiskStatus`, `RiskTreatment`, and `RiskLevel` enums.
-- **Risks Module**: Owner relationship to `Person` and review workflow via `ReviewRisk`.
-- **Risks Module**: Integrated events (`RiskCreated`, `RiskUpdated`, `RiskReviewed`).
-- **Documentation**: Added risks domain usage guide.
+- **Documentation**: New Events guide explaining the choice for Eloquent lifecycle events and semantic domain events.
+- **Documentation**: New Custom Models guide explaining how to extend the package using Contracts and Concerns.
+- **Testing**: Reached and enforced 100% test coverage across the entire package.
+
+### Changed
+
+- **Architecture**: Simplified the domain layer by removing redundant CRUD Action classes (`CreateAsset`, `UpdatePerson`, etc.). Managers now interact directly with Eloquent models for basic operations.
+- **Architecture**: Removed custom Event classes for standard CRUD operations (Created, Updated, Deleted) in favor of Laravel's native Eloquent lifecycle events (`eloquent.created`, etc.).
+- **Architecture**: Renamed Contracts (Interfaces) to follow a pluralized naming convention (`HasPerson` -> `HasPeople`, `HasAsset` -> `HasAssets`) to avoid naming conflicts.
+- **Architecture**: Renamed Concerns (Traits) to follow the `InteractsWith{Domain}s` convention (e.g., `InteractsWithPeople`).
+- **Managers**: Updated all domain managers to support PHP named arguments and more flexible input types (ID, Array, or Object).
+- **Documentation**: Refactored all usage examples to use the `Trustbird` facade and named arguments for better consistency and readability.
+- **AI Guidelines**: Updated `.ai` instructions to reflect the new architecture, naming conventions, and testing requirements.
+
+### Removed
+
+- Redundant CRUD Action classes across all domains.
+- Redundant CRUD Event classes (Created, Updated, Deleted) across all domains.
+- Empty directories left over after architectural simplification.
+
+### Fixed
+
+- Inconsistent test assertions for events.
+- Missing coverage for several manager and service provider methods.
 
 ## [0.1.0-alpha.2] - 2026-07-01
 

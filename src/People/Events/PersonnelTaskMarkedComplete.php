@@ -6,7 +6,7 @@ namespace Trustbird\People\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Trustbird\People\Models\Person;
+use Trustbird\People\Contracts\HasPeople;
 
 class PersonnelTaskMarkedComplete
 {
@@ -14,7 +14,7 @@ class PersonnelTaskMarkedComplete
     use SerializesModels;
 
     public function __construct(
-        public Person $person,
+        public HasPeople $person,
         public array $taskData = [],
     ) {}
 }

@@ -11,9 +11,13 @@
   "require-dev": {
     "orchestra/testbench": "^10.0|^11.0",
     "pestphp/pest": "^3.0|^4.0",
-    "pestphp/pest-plugin-laravel": "^3.0|^4.0"
+    "pestphp/pest-plugin-laravel": "^3.0|^4.0",
+    "laravel/pint": "^1.29"
   },
   "autoload": {
+    "files": [
+      "src/helpers.php"
+    ],
     "psr-4": {
       "Trustbird\\": "src/"
     }

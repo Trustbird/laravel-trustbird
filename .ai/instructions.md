@@ -13,7 +13,7 @@ It must not implement frontend technologies.
 ## Technology
 
 - Laravel 12+
-- PHP 8.4+
+- PHP 8.2+
 - PestPHP
 - Composer package
 - SQLite compatible
