@@ -14,3 +14,4 @@ Please follow the steps below to get started:
 * [Teams](02-usage/03-teams.md)
 * [Assets](02-usage/04-assets.md)
 * [Risks](02-usage/05-risks.md)
+* [Policies](02-usage/06-policies.md)
