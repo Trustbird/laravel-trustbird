@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [Unreleased]
+## [0.1.0-alpha.4] - Unpublished
 
 ### Added
 
@@ -32,6 +32,19 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 - Inconsistent test assertions for events.
 - Missing coverage for several manager and service provider methods.
+- **Policies Module**: Initial implementation including `Policy` and `PolicyVersion` models, migrations, and factories.
+- **Policies Module**: Versioned draft/publish lifecycle via `DraftPolicyVersion`, `UpdatePolicyVersion`, and `PublishPolicyVersion`.
+- **Policies Module**: Owner and reviewer relationships to `Person`, plus review workflow via `ReviewPolicy`.
+- **Policies Module**: Integrated events (`PolicyCreated`, `PolicyUpdated`, `PolicyReviewed`, `PolicyVersionDrafted`, `PolicyVersionUpdated`, `PolicyVersionPublished`).
+- **Documentation**: Added policies domain usage guide.
+
+## [0.1.0-alpha.3] - 2026-07-02
+
+### Added
+
+- **Workspace Module**: Initial implementation including `Workspace` model, migration, factory, and actions.
+- **Teams Module**: Initial implementation including `Team` model, migration, factory, and actions.
+- **Risks Module**: Initial implementation including `Risk` model, migration, factory, and actions.
 
 ## [0.1.0-alpha.2] - 2026-07-01
 

@@ -14,7 +14,9 @@ Please follow the steps below to get started:
 * [Teams](02-usage/03-teams.md)
 * [Assets](02-usage/04-assets.md)
 * [Risks](02-usage/05-risks.md)
+* [Policies](02-usage/06-policies.md)
 
 ## [Step 3: Advanced](03-advanced/01-events.md)
 * [Events](03-advanced/01-events.md)
 * [Custom Models](03-advanced/02-custom-models.md)
+

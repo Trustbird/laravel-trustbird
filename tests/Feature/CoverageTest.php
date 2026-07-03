@@ -3,6 +3,21 @@
 use Trustbird\Assets\Enums\AssetKind;
 use Trustbird\People\Actions\MarkPersonnelTaskComplete;
 use Trustbird\People\Actions\RecordPersonnelReminder;
+use Trustbird\Risks\Events\RiskCreated;
+use Trustbird\Risks\Events\RiskUpdated;
+use Trustbird\Risks\Events\RiskReviewed;
+use Trustbird\Risks\Enums\RiskStatus;
+use Trustbird\Risks\Enums\RiskTreatment;
+use Trustbird\Risks\Enums\RiskLevel;
+use Trustbird\Risks\Models\Risk;
+use Trustbird\Policies\Events\PolicyCreated;
+use Trustbird\Policies\Events\PolicyUpdated;
+use Trustbird\Policies\Events\PolicyReviewed;
+use Trustbird\Policies\Events\PolicyVersionDrafted;
+use Trustbird\Policies\Events\PolicyVersionUpdated;
+use Trustbird\Policies\Events\PolicyVersionPublished;
+use Trustbird\Policies\Enums\PolicyVersionStatus;
+use Trustbird\Policies\Models\Policy;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Enums\PersonnelTaskStatus;
@@ -24,6 +39,19 @@ it('instantiates events', function (): void {
 
     $risk = Risk::factory()->create();
     expect(new RiskReviewed($risk))->toBeInstanceOf(RiskReviewed::class);
+
+    $policy = Policy::factory()->withDraftVersion()->create();
+    $version = $policy->versions->first();
+    expect(new PolicyCreated($policy))->toBeInstanceOf(PolicyCreated::class);
+    expect(new PolicyUpdated($policy))->toBeInstanceOf(PolicyUpdated::class);
+    expect(new PolicyReviewed($policy))->toBeInstanceOf(PolicyReviewed::class);
+    expect(new PolicyVersionDrafted($policy, $version))->toBeInstanceOf(PolicyVersionDrafted::class);
+    expect(new PolicyVersionUpdated($version))->toBeInstanceOf(PolicyVersionUpdated::class);
+    expect(new PolicyVersionPublished($policy, $version))->toBeInstanceOf(PolicyVersionPublished::class);
+
+    $workspace = Workspace::factory()->create();
+    expect(new WorkspaceCreated($workspace))->toBeInstanceOf(WorkspaceCreated::class);
+    expect(new WorkspaceUpdated($workspace))->toBeInstanceOf(WorkspaceUpdated::class);
 });
 
 it('can instantiate service provider', function (): void {
@@ -66,4 +94,7 @@ it('covers all enums', function (): void {
 
     expect(RiskLevel::cases())->toBeArray()
         ->and(RiskLevel::High->value)->toBe('high');
+
+    expect(PolicyVersionStatus::cases())->toBeArray()
+        ->and(PolicyVersionStatus::Draft->value)->toBe('draft');
 });
