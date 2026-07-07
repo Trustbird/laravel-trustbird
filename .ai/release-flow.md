@@ -37,13 +37,15 @@ composer release:prepare -- --dry-run 0.1.0-alpha.5
 7. Commit release prep changes (changelog + docs index).
 8. Push the release branch.
 9. Open a PR to `main` titled `Release v<version>`.
-10. Pre-fill the PR body with a `Closes #...` line based on `#123` references in commits since the latest tag.
+10. Pre-fill the PR body with a `Closes #...` line from:
+    - `#123` references in commits since the latest tag
+    - GitHub issues that have a **linked development branch** whose tip commit is included in the release
 
 ## After the PR is opened
 
 GitHub automations take over:
 
-- **PR autoclose** (`.github/workflows/pr-autoclose.yml`): refreshes the `Closes #...` footer from PR title/body/commits.
+- **PR autoclose** (`.github/workflows/pr-autoclose.yml`): refreshes the `Closes #...` footer from commit messages and issues with linked development branches.
 - **Release changelog date** (`.github/workflows/release-changelog.yml`): on push to `release/v*`, replaces `Unpublished` with an ISO date.
 - **Release gating** (`.github/workflows/tests.yml`): PR checks fail if the changelog header for the release version is not publishable.
 - **Tagging** (`.github/workflows/release-tag.yml`): after merge to `main`, creates `v<version>` from the top dated changelog entry.

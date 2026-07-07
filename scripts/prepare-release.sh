@@ -142,9 +142,17 @@ collect_issue_refs() {
   "${log_cmd[@]}" \
     | grep -Eo '#[0-9]+' \
     | sed 's/#//' \
-    | sort -nu \
-    | paste -sd, - \
-    || true
+    | sort -nu
+}
+
+collect_all_issue_refs() {
+  local range="${1:-}"
+  {
+    collect_issue_refs "$range"
+    if [[ -x "$ROOT/scripts/collect-linked-issue-refs.sh" ]]; then
+      bash "$ROOT/scripts/collect-linked-issue-refs.sh" "$range"
+    fi
+  } | sort -nu | paste -sd, - || true
 }
 
 LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
@@ -153,7 +161,7 @@ if [[ -n "$LAST_TAG" ]]; then
   RANGE="${LAST_TAG}..${BASE}"
 fi
 
-ISSUE_NUMBERS="$(collect_issue_refs "$RANGE")"
+ISSUE_NUMBERS="$(collect_all_issue_refs "$RANGE")"
 CLOSES_LINE="Closes (none detected)"
 if [[ -n "$ISSUE_NUMBERS" ]]; then
   CLOSES_LINE="Closes $(echo "$ISSUE_NUMBERS" | sed 's/,/, #/g' | sed 's/^/#/')"

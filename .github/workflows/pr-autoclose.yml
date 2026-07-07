@@ -6,6 +6,8 @@ on:
 
 permissions:
   pull-requests: write
+  issues: read
+  contents: read
 
 jobs:
   autoclose:
@@ -19,19 +21,19 @@ jobs:
           script: |
             const pr = context.payload.pull_request
 
-            // Only apply to PRs targeting main.
             if (pr.base?.ref !== 'main') {
               core.info(`Skipping: base is ${pr.base?.ref}`)
               return
             }
 
-            // Optional: only apply to release branches (release/vX).
             const headRef = pr.head?.ref ?? ''
             if (!/^release\/v/.test(headRef)) {
               core.info(`Skipping: head is ${headRef}`)
               return
             }
 
+            const owner = context.repo.owner
+            const repo = context.repo.repo
             const issueRegex = /#(\d+)/g
             const found = new Set()
 
@@ -42,23 +44,96 @@ jobs:
               }
             }
 
-            // Collect from title + body first.
             collectFrom(pr.title)
             collectFrom(pr.body)
 
-            // Collect from commit messages in this PR.
             const commits = await github.paginate(github.rest.pulls.listCommits, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner,
+              repo,
               pull_number: pr.number,
               per_page: 100,
             })
 
+            const commitShas = new Set()
             for (const commit of commits) {
+              commitShas.add(commit.sha)
               collectFrom(commit?.commit?.message ?? '')
             }
 
-            // Remove the PR number itself if it got captured (e.g. "#123" in title).
+            async function collectLinkedBranchIssues() {
+              const query = `
+                query($owner: String!, $name: String!, $after: String) {
+                  repository(owner: $owner, name: $name) {
+                    issues(states: [OPEN, CLOSED], first: 100, after: $after) {
+                      pageInfo { hasNextPage endCursor }
+                      nodes {
+                        number
+                        linkedBranches(first: 20) {
+                          nodes {
+                            ref {
+                              name
+                              target {
+                                ... on Commit { oid }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              `
+
+              let cursor = null
+
+              while (true) {
+                const result = await github.graphql(query, {
+                  owner,
+                  name: repo,
+                  after: cursor,
+                })
+
+                const issues = result.repository.issues
+
+                for (const issue of issues.nodes) {
+                  for (const branch of issue.linkedBranches.nodes) {
+                    const oid = branch.ref?.target?.oid
+                    if (!oid) {
+                      continue
+                    }
+
+                    if (commitShas.has(oid)) {
+                      found.add(issue.number)
+                      continue
+                    }
+
+                    try {
+                      const { data } = await github.rest.repos.compareCommits({
+                        owner,
+                        repo,
+                        base: oid,
+                        head: pr.head.sha,
+                      })
+
+                      if (data.status === 'ahead' || data.status === 'identical') {
+                        found.add(issue.number)
+                      }
+                    } catch (error) {
+                      core.info(`Could not compare linked branch for issue #${issue.number}: ${error}`)
+                    }
+                  }
+                }
+
+                if (!issues.pageInfo.hasNextPage) {
+                  break
+                }
+
+                cursor = issues.pageInfo.endCursor
+              }
+            }
+
+            await collectLinkedBranchIssues()
+
             found.delete(pr.number)
 
             const sorted = [...found].sort((a, b) => a - b)
@@ -94,9 +169,8 @@ jobs:
             }
 
             await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner,
+              repo,
               pull_number: pr.number,
               body: nextBody,
             })
-
