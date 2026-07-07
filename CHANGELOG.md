@@ -11,6 +11,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - **Documentation**: New Events guide explaining the choice for Eloquent lifecycle events and semantic domain events.
 - **Documentation**: New Custom Models guide explaining how to extend the package using Contracts and Concerns.
 - **Testing**: Reached and enforced 100% test coverage across the entire package.
+- **Suppliers Module**: Initial scaffolding for suppliers/vendors including review metadata and relation foundation.
 
 ### Changed
 

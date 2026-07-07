@@ -14,6 +14,8 @@ use Trustbird\Policies\Events\PolicyVersionUpdated;
 use Trustbird\Policies\Events\PolicyVersionPublished;
 use Trustbird\Policies\Enums\PolicyVersionStatus;
 use Trustbird\Policies\Models\Policy;
+use Trustbird\Suppliers\Enums\SupplierCriticality;
+use Trustbird\Suppliers\Enums\SupplierStatus;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Enums\PersonnelTaskStatus;
@@ -83,4 +85,10 @@ it('covers all enums', function (): void {
 
     expect(PolicyVersionStatus::cases())->toBeArray()
         ->and(PolicyVersionStatus::Draft->value)->toBe('draft');
+
+    expect(SupplierStatus::cases())->toBeArray()
+        ->and(SupplierStatus::Active->value)->toBe('active');
+
+    expect(SupplierCriticality::cases())->toBeArray()
+        ->and(SupplierCriticality::Critical->value)->toBe('critical');
 });
