@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Trustbird;
 
 use Trustbird\Assets\Managers\AssetsManager;
+use Trustbird\Incidents\Managers\IncidentsManager;
 use Trustbird\People\Managers\PeopleManager;
 use Trustbird\Policies\Managers\PoliciesManager;
 use Trustbird\Risks\Managers\RisksManager;
@@ -41,5 +42,10 @@ final class TrustbirdManager
     public function policies(): PoliciesManager
     {
         return new PoliciesManager;
+    }
+
+    public function incidents(): IncidentsManager
+    {
+        return new IncidentsManager;
     }
 }

@@ -7,6 +7,10 @@ namespace Trustbird;
 use Illuminate\Support\ServiceProvider;
 use Trustbird\Assets\Contracts\HasAssets;
 use Trustbird\Assets\Models\Asset;
+use Trustbird\Incidents\Contracts\HasIncidentNotes;
+use Trustbird\Incidents\Contracts\HasIncidents;
+use Trustbird\Incidents\Models\Incident;
+use Trustbird\Incidents\Models\IncidentNote;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\People\Models\Person;
 use Trustbird\Risks\Contracts\HasRisks;
@@ -57,6 +61,14 @@ final class TrustbirdServiceProvider extends ServiceProvider
             'policy' => [
                 'contract' => HasPolicies::class,
                 'default' => Policy::class,
+            ],
+            'incident' => [
+                'contract' => HasIncidents::class,
+                'default' => Incident::class,
+            ],
+            'incident_note' => [
+                'contract' => HasIncidentNotes::class,
+                'default' => IncidentNote::class,
             ],
         ];
 

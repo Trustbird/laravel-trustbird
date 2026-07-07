@@ -15,6 +15,7 @@ Please follow the steps below to get started:
 * [Assets](02-usage/04-assets.md)
 * [Risks](02-usage/05-risks.md)
 * [Policies](02-usage/06-policies.md)
+* [Incidents](02-usage/07-incidents.md)
 
 ## [Step 3: Advanced](03-advanced/01-events.md)
 * [Events](03-advanced/01-events.md)

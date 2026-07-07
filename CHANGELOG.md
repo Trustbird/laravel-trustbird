@@ -11,6 +11,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - **Documentation**: New Events guide explaining the choice for Eloquent lifecycle events and semantic domain events.
 - **Documentation**: New Custom Models guide explaining how to extend the package using Contracts and Concerns.
 - **Testing**: Reached and enforced 100% test coverage across the entire package.
+- **Incidents Module**: Initial scaffolding for security, privacy and operational events (incidents + timeline notes).
 
 ### Changed
 
@@ -37,6 +38,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - **Policies Module**: Owner and reviewer relationships to `Person`, plus review workflow via `ReviewPolicy`.
 - **Policies Module**: Integrated events (`PolicyCreated`, `PolicyUpdated`, `PolicyReviewed`, `PolicyVersionDrafted`, `PolicyVersionUpdated`, `PolicyVersionPublished`).
 - **Documentation**: Added policies domain usage guide.
+- **Documentation**: Added incidents domain usage guide.
 
 ## [0.1.0-alpha.3] - 2026-07-02
 
