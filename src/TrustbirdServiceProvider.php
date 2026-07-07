@@ -21,6 +21,10 @@ use Trustbird\Suppliers\Contracts\HasSupplierRelations;
 use Trustbird\Suppliers\Contracts\HasSuppliers;
 use Trustbird\Suppliers\Models\Supplier;
 use Trustbird\Suppliers\Models\SupplierRelation;
+use Trustbird\Tasks\Contracts\HasTaskLinks;
+use Trustbird\Tasks\Contracts\HasTasks;
+use Trustbird\Tasks\Models\Task;
+use Trustbird\Tasks\Models\TaskRelation;
 use Trustbird\Teams\Contracts\HasTeams;
 use Trustbird\Teams\Models\Team;
 use Trustbird\Workspaces\Contracts\HasWorkspaces;
@@ -81,6 +85,14 @@ final class TrustbirdServiceProvider extends ServiceProvider
             'supplier_relation' => [
                 'contract' => HasSupplierRelations::class,
                 'default' => SupplierRelation::class,
+            ],
+            'task' => [
+                'contract' => HasTasks::class,
+                'default' => Task::class,
+            ],
+            'task_relation' => [
+                'contract' => HasTaskLinks::class,
+                'default' => TaskRelation::class,
             ],
         ];
 

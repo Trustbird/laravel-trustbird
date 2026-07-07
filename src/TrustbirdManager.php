@@ -10,6 +10,7 @@ use Trustbird\People\Managers\PeopleManager;
 use Trustbird\Policies\Managers\PoliciesManager;
 use Trustbird\Risks\Managers\RisksManager;
 use Trustbird\Suppliers\Managers\SuppliersManager;
+use Trustbird\Tasks\Managers\TasksManager;
 use Trustbird\Teams\Managers\TeamsManager;
 use Trustbird\Workspaces\Managers\WorkspacesManager;
 
@@ -53,5 +54,10 @@ final class TrustbirdManager
     public function suppliers(): SuppliersManager
     {
         return new SuppliersManager;
+    }
+
+    public function tasks(): TasksManager
+    {
+        return new TasksManager;
     }
 }

@@ -84,3 +84,21 @@ Before releasing, verify:
 - changelog is updated
 - migrations are safe
 - public API changes are intentional
+
+## Releases and tags
+
+`main` is protected and must only be updated through pull requests.
+
+This repository uses `CHANGELOG.md` as the source of truth for releases.
+
+Rules:
+
+- Release headers MUST have an ISO date (YYYY-MM-DD).
+- Release headers MUST NOT use `Unpublished`.
+- The tag format is `v<version>` (example: `v0.1.0-alpha.4`).
+
+Process:
+
+- Prepare a release PR that updates `CHANGELOG.md` (top entry = the version being released + ISO date).
+- Merge the release PR into `main`.
+- A GitHub Actions workflow will create and push the tag automatically after the merge.

@@ -38,6 +38,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -45,6 +47,13 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
           coverage: xdebug
+
+      - name: Validate changelog is publishable
+        run: |
+          if grep -nE '## \[[^]]+\] - Unpublished' CHANGELOG.md; then
+            echo "CHANGELOG.md contains an 'Unpublished' release header. Replace it with an ISO date (YYYY-MM-DD) before merging."
+            exit 1
+          fi
 
       - name: Configure Laravel version
         run: |
@@ -69,6 +78,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -76,6 +87,13 @@ jobs:
           php-version: '8.3'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
           coverage: xdebug
+
+      - name: Validate changelog is publishable
+        run: |
+          if grep -nE '## \[[^]]+\] - Unpublished' CHANGELOG.md; then
+            echo "CHANGELOG.md contains an 'Unpublished' release header. Replace it with an ISO date (YYYY-MM-DD) before merging."
+            exit 1
+          fi
 
       - name: Install dependencies
         run: composer update --prefer-dist --no-interaction --no-progress

@@ -29,5 +29,7 @@ return [
         'incident_note' => null,
         'supplier' => null,
         'supplier_relation' => null,
+        'task' => null,
+        'task_relation' => null,
     ],
 ];

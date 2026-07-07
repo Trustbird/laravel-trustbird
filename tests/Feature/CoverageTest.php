@@ -18,6 +18,8 @@ use Trustbird\Incidents\Enums\IncidentSeverity;
 use Trustbird\Incidents\Enums\IncidentStatus;
 use Trustbird\Suppliers\Enums\SupplierCriticality;
 use Trustbird\Suppliers\Enums\SupplierStatus;
+use Trustbird\Tasks\Enums\TaskPriority;
+use Trustbird\Tasks\Enums\TaskStatus;
 use Trustbird\People\Enums\EmploymentStatus;
 use Trustbird\People\Enums\EmploymentType;
 use Trustbird\People\Enums\PersonnelTaskStatus;
@@ -99,4 +101,9 @@ it('covers all enums', function (): void {
 
     expect(SupplierCriticality::cases())->toBeArray()
         ->and(SupplierCriticality::Critical->value)->toBe('critical');
+    expect(TaskStatus::cases())->toBeArray()
+        ->and(TaskStatus::Open->value)->toBe('open');
+
+    expect(TaskPriority::cases())->toBeArray()
+        ->and(TaskPriority::Urgent->value)->toBe('urgent');
 });

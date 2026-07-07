@@ -30,3 +30,14 @@ Before making changes, read the AI and contributor guidelines in:
 These documents define the package scope, architecture, coding rules, testing policy, and development workflow.
 
 They are intended for both human contributors and AI coding assistants.
+
+## Release and tagging
+
+`main` is protected and must only be updated through pull requests.
+
+This repository uses `CHANGELOG.md` as the source of truth for releases.
+
+- The latest release entry MUST use an ISO date (YYYY-MM-DD).
+- Release entries MUST NOT use `Unpublished`.
+- After a release PR is merged to `main`, a GitHub Actions workflow automatically creates a tag.
+  - Tag format: `v<version>` (example: `v0.1.0-alpha.4`)
