@@ -80,7 +80,7 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
-SEMVER_RE='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
+SEMVER_RE='^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z-]+([.][0-9A-Za-z-]+)*)?([+][0-9A-Za-z-]+([.][0-9A-Za-z-]+)*)?$'
 if ! [[ "$VERSION" =~ $SEMVER_RE ]]; then
   echo "Invalid SemVer version: $VERSION" >&2
   echo "Expected something like: 0.1.0-alpha.5" >&2
