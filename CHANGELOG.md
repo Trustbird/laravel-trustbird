@@ -13,6 +13,8 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - **Testing**: Reached and enforced 100% test coverage across the entire package.
 - **Incidents Module**: Initial scaffolding for security, privacy and operational events (incidents + timeline notes).
 - **Suppliers Module**: Initial scaffolding for suppliers/vendors including review metadata and relation foundation.
+- **Tasks Module**: Initial scaffolding for actionable governance work (tasks + relations foundation).
+-
 
 ### Changed
 
