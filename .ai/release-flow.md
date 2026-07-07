@@ -45,6 +45,7 @@ composer release:prepare -- --dry-run 0.1.0-alpha.5
 
 GitHub automations take over:
 
+- **PR test plan** (`.github/workflows/pr-testplan.yml`): checks test plan boxes when all CI workflows pass on a release PR.
 - **PR autoclose** (`.github/workflows/pr-autoclose.yml`): refreshes the `Closes #...` footer from commit messages and issues with linked development branches.
 - **Release changelog date** (`.github/workflows/release-changelog.yml`): on push to `release/v*`, replaces `Unpublished` with an ISO date.
 - **Release gating** (`.github/workflows/tests.yml`): PR checks fail if the changelog header for the release version is not publishable.
