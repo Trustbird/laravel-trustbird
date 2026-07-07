@@ -24,5 +24,8 @@ return [
         'asset' => null,
         'team' => null,
         'risk' => null,
+        'policy' => null,
+        'task' => null,
+        'task_relation' => null,
     ],
 ];

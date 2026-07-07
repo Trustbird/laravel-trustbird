@@ -8,6 +8,7 @@ use Trustbird\Assets\Managers\AssetsManager;
 use Trustbird\People\Managers\PeopleManager;
 use Trustbird\Policies\Managers\PoliciesManager;
 use Trustbird\Risks\Managers\RisksManager;
+use Trustbird\Tasks\Managers\TasksManager;
 use Trustbird\Teams\Managers\TeamsManager;
 use Trustbird\Workspaces\Managers\WorkspacesManager;
 
@@ -41,5 +42,10 @@ final class TrustbirdManager
     public function policies(): PoliciesManager
     {
         return new PoliciesManager;
+    }
+
+    public function tasks(): TasksManager
+    {
+        return new TasksManager;
     }
 }
