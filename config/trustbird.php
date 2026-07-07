@@ -24,5 +24,12 @@ return [
         'asset' => null,
         'team' => null,
         'risk' => null,
+        'policy' => null,
+        'incident' => null,
+        'incident_note' => null,
+        'supplier' => null,
+        'supplier_relation' => null,
+        'task' => null,
+        'task_relation' => null,
     ],
 ];

@@ -30,6 +30,7 @@ Please ensure that:
 - Existing tests continue to pass.
 - Documentation is updated when behaviour changes.
 - Breaking changes are clearly documented.
+- `CHANGELOG.md` remains publishable (no `Unpublished` release headers; use ISO dates like `2026-07-07`).
 
 ## Reporting issues
 
