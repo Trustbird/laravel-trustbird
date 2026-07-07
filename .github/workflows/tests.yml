@@ -73,6 +73,15 @@ jobs:
             exit 1
           fi
 
+          # Validate SemVer (MAJOR.MINOR.PATCH with optional pre-release/build).
+          # Examples: 0.1.0, 1.2.3-alpha.4, 2.0.0-rc.1+build.7
+          SEMVER_RE='^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z-]+([.][0-9A-Za-z-]+)*)?([+][0-9A-Za-z-]+([.][0-9A-Za-z-]+)*)?$'
+          if ! echo "$VERSION" | grep -qE "$SEMVER_RE"; then
+            echo "Invalid release version in branch name: $BRANCH"
+            echo "Expected: release/v<version> where <version> is SemVer (e.g. release/v0.1.0-alpha.4)"
+            exit 1
+          fi
+
           if grep -nE "## \\[$VERSION\\] - [Uu]npublished" CHANGELOG.md; then
             echo "CHANGELOG.md contains an 'Unpublished' release header for [$VERSION]. Replace it with an ISO date (YYYY-MM-DD) before merging."
             exit 1
@@ -139,6 +148,15 @@ jobs:
 
           if [ -z "$VERSION" ]; then
             echo "Could not parse version from release branch name: $BRANCH"
+            exit 1
+          fi
+
+          # Validate SemVer (MAJOR.MINOR.PATCH with optional pre-release/build).
+          # Examples: 0.1.0, 1.2.3-alpha.4, 2.0.0-rc.1+build.7
+          SEMVER_RE='^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(-[0-9A-Za-z-]+([.][0-9A-Za-z-]+)*)?([+][0-9A-Za-z-]+([.][0-9A-Za-z-]+)*)?$'
+          if ! echo "$VERSION" | grep -qE "$SEMVER_RE"; then
+            echo "Invalid release version in branch name: $BRANCH"
+            echo "Expected: release/v<version> where <version> is SemVer (e.g. release/v0.1.0-alpha.4)"
             exit 1
           fi
 

@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [0.1.0-alpha.5] - 2026-07-07
+
+### Added
+
+- **Release automation**: AI release flow (`.ai/release-flow.md`), release checklist, and `scripts/prepare-release.sh`.
+- **Documentation**: Configurable docs navigation via `docs/navigation.php` with automatic sync during release prepare.
+- **Documentation**: `AGENTS.md` guide for human and AI contributors.
+- **CI**: SemVer validation for `release/v*` pull requests.
+- **CI**: PR autoclose workflow for release pull requests.
+
+### Changed
+
+- **Documentation**: Introduction and docs index now sync usage and advanced links from `docs/navigation.php`.
+- **README**: Semantic Versioning guidance and release automation overview.
+
 ## [0.1.0-alpha.4] - 2026-07-07
 
 ### Added
