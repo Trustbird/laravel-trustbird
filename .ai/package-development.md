@@ -73,14 +73,22 @@ Whenever behaviour changes:
 
 Documentation is part of the product.
 
+When adding or changing documentation folders:
+
+- add markdown files under `docs/NN-name/`
+- register the folder in `docs/navigation.php` with the intended introduction heading
+- docs navigation sync (`docs/index.md`, introduction sections) is handled by `composer release:prepare`
+
 ## Release mindset
 
-Before releasing, verify:
+Before releasing, complete `.ai/release-checklist.md`.
+
+At minimum, verify:
 
 - tests pass
 - coverage is 100%
 - static analysis passes
-- documentation is up to date
+- documentation is up to date (including docs index sync)
 - changelog is updated
 - migrations are safe
 - public API changes are intentional
@@ -102,3 +110,11 @@ Process:
 - Prepare a release PR that updates `CHANGELOG.md` (top entry = the version being released + ISO date).
 - Merge the release PR into `main`.
 - A GitHub Actions workflow will create and push the tag automatically after the merge.
+
+AI/human release prepare command:
+
+```bash
+composer release:prepare -- <version>
+```
+
+See `.ai/release-flow.md` for the full agent-driven release flow.

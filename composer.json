@@ -37,7 +37,8 @@
   },
   "scripts": {
     "test": "pest",
-    "test:coverage": "pest --coverage --min=100"
+    "test:coverage": "pest --coverage --min=100",
+    "release:prepare": "bash scripts/prepare-release.sh"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

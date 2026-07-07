@@ -1,0 +1,102 @@
+name: PR Autoclose Issues
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, edited, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  autoclose:
+    name: Update PR closes footer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update PR body with closes list
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request
+
+            // Only apply to PRs targeting main.
+            if (pr.base?.ref !== 'main') {
+              core.info(`Skipping: base is ${pr.base?.ref}`)
+              return
+            }
+
+            // Optional: only apply to release branches (release/vX).
+            const headRef = pr.head?.ref ?? ''
+            if (!/^release\/v/.test(headRef)) {
+              core.info(`Skipping: head is ${headRef}`)
+              return
+            }
+
+            const issueRegex = /#(\d+)/g
+            const found = new Set()
+
+            function collectFrom(text) {
+              if (!text) return
+              for (const match of text.matchAll(issueRegex)) {
+                found.add(Number(match[1]))
+              }
+            }
+
+            // Collect from title + body first.
+            collectFrom(pr.title)
+            collectFrom(pr.body)
+
+            // Collect from commit messages in this PR.
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            })
+
+            for (const commit of commits) {
+              collectFrom(commit?.commit?.message ?? '')
+            }
+
+            // Remove the PR number itself if it got captured (e.g. "#123" in title).
+            found.delete(pr.number)
+
+            const sorted = [...found].sort((a, b) => a - b)
+            const closesLine = sorted.length
+              ? `Closes ${sorted.map(n => `#${n}`).join(', ')}`
+              : 'Closes (none detected)'
+
+            const start = '<!-- trustbird:autoclose:start -->'
+            const end = '<!-- trustbird:autoclose:end -->'
+
+            const block = [
+              start,
+              closesLine,
+              end,
+            ].join('\n')
+
+            const currentBody = pr.body ?? ''
+            let nextBody
+
+            const startIdx = currentBody.indexOf(start)
+            const endIdx = currentBody.indexOf(end)
+
+            if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+              nextBody = currentBody.slice(0, startIdx) + block + currentBody.slice(endIdx + end.length)
+            } else {
+              const trimmed = currentBody.trimEnd()
+              nextBody = trimmed.length ? `${trimmed}\n\n${block}\n` : `${block}\n`
+            }
+
+            if (nextBody === currentBody) {
+              core.info('PR body already up-to-date.')
+              return
+            }
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              body: nextBody,
+            })
+

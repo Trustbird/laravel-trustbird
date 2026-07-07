@@ -31,13 +31,29 @@ These documents define the package scope, architecture, coding rules, testing po
 
 They are intended for both human contributors and AI coding assistants.
 
+See also `AGENTS.md` for a short, actionable checklist (for humans and AI agents).
+
+## Semantic Versioning
+
+This project follows Semantic Versioning (\(MAJOR.MINOR.PATCH\)) with pre-release identifiers (example: `0.1.0-alpha.4`).
+
+- **MAJOR**: Breaking changes to the public developer API (method signatures/parameter names), configuration keys, migrations that require manual intervention, or removal/renames of public contracts and documented behaviour.
+- **MINOR**: Backwards-compatible additions (new domains/managers/models), new optional configuration, additive migrations, new documented functionality.
+- **PATCH**: Backwards-compatible bug fixes, documentation fixes, internal refactors that do not change the public API.
+
 ## Release and tagging
 
 `main` is protected and must only be updated through pull requests.
 
 This repository uses `CHANGELOG.md` as the source of truth for releases.
 
-- The latest release entry MUST use an ISO date (YYYY-MM-DD).
-- Release entries MUST NOT use `Unpublished`.
 - After a release PR is merged to `main`, a GitHub Actions workflow automatically creates a tag.
   - Tag format: `v<version>` (example: `v0.1.0-alpha.4`)
+
+Automations:
+
+- **Release prepare (local/AI)**: `composer release:prepare -- <version>` creates `release/v*`, syncs docs, runs tests, and opens a PR (see `.ai/release-flow.md`).
+- **PR issue autoclose**: PR bodies are updated with a `Closes #...` footer based on `#123` references in PR titles/bodies and commit messages.
+- **Release changelog date**: on pushes to `release/v*` branches, the `CHANGELOG.md` header for that version is converted from `Unpublished` to an ISO date.
+- **Release gating**: PRs from `release/v*` branches into `main` fail CI if the changelog header for the release does not contain an ISO date.
+- **Tagging**: after merge to `main`, a tag `v<version>` is created from the latest publishable changelog header.
