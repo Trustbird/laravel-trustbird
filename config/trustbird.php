@@ -25,6 +25,8 @@ return [
         'team' => null,
         'risk' => null,
         'policy' => null,
+        'incident' => null,
+        'incident_note' => null,
         'supplier' => null,
         'supplier_relation' => null,
     ],

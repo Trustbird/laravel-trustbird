@@ -14,6 +14,7 @@ use Trustbird\TrustbirdManager;
  * @method static \Trustbird\Teams\Managers\TeamsManager teams()
  * @method static \Trustbird\Risks\Managers\RisksManager risks()
  * @method static \Trustbird\Policies\Managers\PoliciesManager policies()
+ * @method static \Trustbird\Incidents\Managers\IncidentsManager incidents()
  * @method static \Trustbird\Suppliers\Managers\SuppliersManager suppliers()
  *
  * @see TrustbirdManager
