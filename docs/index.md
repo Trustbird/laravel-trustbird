@@ -20,6 +20,10 @@ Please follow the steps below to get started:
 * [Policies](02-usage/06-policies.md)
 * [Incidents](02-usage/07-incidents.md)
 * [Suppliers](02-usage/08-suppliers.md)
+* [Controls](02-usage/09-controls.md)
+* [Documents](02-usage/10-documents.md)
+* [Evidence](02-usage/11-evidence.md)
+* [Reviews](02-usage/12-reviews.md)
 <!-- trustbird:docs-nav:step-2-usage:end -->
 
 ## [Step 3: Advanced](03-advanced/01-events.md)
