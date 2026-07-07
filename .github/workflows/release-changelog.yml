@@ -1,0 +1,60 @@
+name: Release Changelog
+
+on:
+  push:
+    branches:
+      - release/v*
+
+permissions:
+  contents: write
+
+jobs:
+  publishable-changelog:
+    name: Ensure release header date
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure release changelog header has ISO date
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BRANCH="${GITHUB_REF_NAME:-}"
+          VERSION="$(echo "$BRANCH" | sed -nE 's/^release\/v(.+)$/\1/p')"
+
+          if [ -z "$VERSION" ]; then
+            echo "Could not parse version from release branch name: $BRANCH"
+            exit 1
+          fi
+
+          TODAY="$(date -u +%F)"
+
+          # Replace "Unpublished" header for this release with an ISO date.
+          if grep -nE "^## \\[$VERSION\\] - [Uu]npublished" CHANGELOG.md; then
+            sed -i.bak -E "s/^## \\[$VERSION\\] - [Uu]npublished.*$/## [$VERSION] - $TODAY/" CHANGELOG.md
+            rm -f CHANGELOG.md.bak
+          fi
+
+          # If header still doesn't have a date, fail loudly.
+          if ! grep -nE "^## \\[$VERSION\\] - [0-9]{4}-[0-9]{2}-[0-9]{2}" CHANGELOG.md; then
+            echo "CHANGELOG.md must contain: ## [$VERSION] - YYYY-MM-DD"
+            exit 1
+          fi
+
+          if git diff --quiet; then
+            echo "No changelog changes needed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add CHANGELOG.md
+          git commit -m "chore: publish release changelog date"
+          git push
+
