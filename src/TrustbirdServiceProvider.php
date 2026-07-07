@@ -7,12 +7,26 @@ namespace Trustbird;
 use Illuminate\Support\ServiceProvider;
 use Trustbird\Assets\Contracts\HasAssets;
 use Trustbird\Assets\Models\Asset;
+use Trustbird\Controls\Contracts\HasControlRelations;
+use Trustbird\Controls\Contracts\HasControls;
+use Trustbird\Controls\Models\Control;
+use Trustbird\Controls\Models\ControlRelation;
+use Trustbird\Documents\Contracts\HasDocuments;
+use Trustbird\Documents\Models\Document;
+use Trustbird\Evidence\Contracts\HasEvidence;
+use Trustbird\Evidence\Contracts\HasEvidenceRelations;
+use Trustbird\Evidence\Models\Evidence;
+use Trustbird\Evidence\Models\EvidenceRelation;
 use Trustbird\Incidents\Contracts\HasIncidentNotes;
 use Trustbird\Incidents\Contracts\HasIncidents;
 use Trustbird\Incidents\Models\Incident;
 use Trustbird\Incidents\Models\IncidentNote;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\People\Models\Person;
+use Trustbird\Reviews\Contracts\HasReviewReviewers;
+use Trustbird\Reviews\Contracts\HasReviews;
+use Trustbird\Reviews\Models\Review;
+use Trustbird\Reviews\Models\ReviewReviewer;
 use Trustbird\Risks\Contracts\HasRisks;
 use Trustbird\Risks\Models\Risk;
 use Trustbird\Policies\Contracts\HasPolicies;
@@ -58,6 +72,26 @@ final class TrustbirdServiceProvider extends ServiceProvider
                 'contract' => HasAssets::class,
                 'default' => Asset::class,
             ],
+            'control' => [
+                'contract' => HasControls::class,
+                'default' => Control::class,
+            ],
+            'control_relation' => [
+                'contract' => HasControlRelations::class,
+                'default' => ControlRelation::class,
+            ],
+            'document' => [
+                'contract' => HasDocuments::class,
+                'default' => Document::class,
+            ],
+            'evidence' => [
+                'contract' => HasEvidence::class,
+                'default' => Evidence::class,
+            ],
+            'evidence_relation' => [
+                'contract' => HasEvidenceRelations::class,
+                'default' => EvidenceRelation::class,
+            ],
             'team' => [
                 'contract' => HasTeams::class,
                 'default' => Team::class,
@@ -65,6 +99,14 @@ final class TrustbirdServiceProvider extends ServiceProvider
             'risk' => [
                 'contract' => HasRisks::class,
                 'default' => Risk::class,
+            ],
+            'review' => [
+                'contract' => HasReviews::class,
+                'default' => Review::class,
+            ],
+            'review_reviewer' => [
+                'contract' => HasReviewReviewers::class,
+                'default' => ReviewReviewer::class,
             ],
             'policy' => [
                 'contract' => HasPolicies::class,
