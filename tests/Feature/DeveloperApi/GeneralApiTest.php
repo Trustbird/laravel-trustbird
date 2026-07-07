@@ -5,7 +5,9 @@ declare(strict_types=1);
 use Trustbird\Assets\Managers\AssetsManager;
 use Trustbird\Facades\Trustbird;
 use Trustbird\People\Managers\PeopleManager;
+use Trustbird\Policies\Managers\PoliciesManager;
 use Trustbird\Risks\Managers\RisksManager;
+use Trustbird\Suppliers\Managers\SuppliersManager;
 use Trustbird\Teams\Managers\TeamsManager;
 use Trustbird\TrustbirdManager;
 use Trustbird\Workspaces\Managers\WorkspacesManager;
@@ -15,7 +17,9 @@ it('provides access to all managers via the facade', function () {
         ->and(Trustbird::workspaces())->toBeInstanceOf(WorkspacesManager::class)
         ->and(Trustbird::assets())->toBeInstanceOf(AssetsManager::class)
         ->and(Trustbird::teams())->toBeInstanceOf(TeamsManager::class)
-        ->and(Trustbird::risks())->toBeInstanceOf(RisksManager::class);
+        ->and(Trustbird::risks())->toBeInstanceOf(RisksManager::class)
+        ->and(Trustbird::policies())->toBeInstanceOf(PoliciesManager::class)
+        ->and(Trustbird::suppliers())->toBeInstanceOf(SuppliersManager::class);
 });
 
 it('provides access to all managers via the helper', function () {
@@ -24,5 +28,7 @@ it('provides access to all managers via the helper', function () {
         ->and(trustbird()->workspaces())->toBeInstanceOf(WorkspacesManager::class)
         ->and(trustbird()->assets())->toBeInstanceOf(AssetsManager::class)
         ->and(trustbird()->teams())->toBeInstanceOf(TeamsManager::class)
-        ->and(trustbird()->risks())->toBeInstanceOf(RisksManager::class);
+        ->and(trustbird()->risks())->toBeInstanceOf(RisksManager::class)
+        ->and(trustbird()->policies())->toBeInstanceOf(PoliciesManager::class)
+        ->and(trustbird()->suppliers())->toBeInstanceOf(SuppliersManager::class);
 });
