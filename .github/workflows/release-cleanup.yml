@@ -1,0 +1,72 @@
+name: Release Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    name: Delete merged release branches
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete release branches
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const mergedBranch = context.payload.pull_request.head.ref
+
+            async function deleteBranch(name) {
+              try {
+                await github.rest.git.deleteRef({
+                  owner,
+                  repo,
+                  ref: `heads/${name}`,
+                })
+                core.info(`Deleted branch: ${name}`)
+              } catch (error) {
+                core.info(`Could not delete branch ${name}: ${error}`)
+              }
+            }
+
+            await deleteBranch(mergedBranch)
+
+            const { data: branches } = await github.rest.repos.listBranches({
+              owner,
+              repo,
+              per_page: 100,
+            })
+
+            const { data: tags } = await github.rest.repos.listTags({
+              owner,
+              repo,
+              per_page: 100,
+            })
+
+            const taggedVersions = new Set(
+              tags
+                .map((tag) => tag.name)
+                .filter((name) => name.startsWith('v'))
+                .map((name) => name.slice(1))
+            )
+
+            for (const { name } of branches) {
+              if (!name.startsWith('release/v')) {
+                continue
+              }
+
+              const version = name.replace(/^release\/v/, '')
+              if (!taggedVersions.has(version)) {
+                continue
+              }
+
+              await deleteBranch(name)
+            }

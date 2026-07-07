@@ -53,7 +53,9 @@ This repository uses `CHANGELOG.md` as the source of truth for releases.
 Automations:
 
 - **Release prepare (local/AI)**: `composer release:prepare -- <version>` creates `release/v*`, syncs docs, runs tests, and opens a PR (see `.ai/release-flow.md`).
+- **PR test plan**: test plan checkmarks are updated when all CI workflows pass.
 - **PR issue autoclose**: PR bodies are updated with a `Closes #...` footer based on `#123` references in PR titles/bodies and commit messages.
 - **Release changelog date**: on pushes to `release/v*` branches, the `CHANGELOG.md` header for that version is converted from `Unpublished` to an ISO date.
 - **Release gating**: PRs from `release/v*` branches into `main` fail CI if the changelog header for the release does not contain an ISO date.
 - **Tagging**: after merge to `main`, a tag `v<version>` is created from the latest publishable changelog header.
+- **Release cleanup**: merged `release/v*` branches are deleted automatically after the release PR merges.

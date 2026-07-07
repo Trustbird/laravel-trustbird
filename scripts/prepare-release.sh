@@ -174,9 +174,11 @@ Prepare release \`${VERSION}\`.
 
 ## Test plan
 
+<!-- trustbird:testplan:start -->
 - [ ] CI passes
 - [ ] Changelog reviewed
-- [ ] Docs index is in sync
+- [ ] Docs navigation is in sync
+<!-- trustbird:testplan:end -->
 
 ${CLOSES_LINE}
 EOF
