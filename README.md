@@ -58,4 +58,4 @@ Automations:
 - **Release changelog date**: on pushes to `release/v*` branches, the `CHANGELOG.md` header for that version is converted from `Unpublished` to an ISO date.
 - **Release gating**: PRs from `release/v*` branches into `main` fail CI if the changelog header for the release does not contain an ISO date.
 - **Tagging**: after merge to `main`, a tag `v<version>` is created from the latest publishable changelog header.
-- **Release cleanup**: merged `release/v*` branches are deleted automatically after the release PR merges.
+- **Release cleanup**: merged `release/v*` branches and shipped `feature/*` branches are deleted automatically after the release PR merges.

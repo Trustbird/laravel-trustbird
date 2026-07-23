@@ -11,18 +11,19 @@ permissions:
 
 jobs:
   cleanup:
-    name: Delete merged release branches
+    name: Delete merged release and feature branches
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/v')
     runs-on: ubuntu-latest
 
     steps:
-      - name: Delete release branches
+      - name: Delete release and feature branches
         uses: actions/github-script@v7
         with:
           script: |
             const owner = context.repo.owner
             const repo = context.repo.repo
             const mergedBranch = context.payload.pull_request.head.ref
+            const releaseHeadSha = context.payload.pull_request.head.sha
 
             async function deleteBranch(name) {
               try {
@@ -37,6 +38,77 @@ jobs:
               }
             }
 
+            async function isContainedInRelease(branchTipSha) {
+              try {
+                const { data } = await github.rest.repos.compareCommits({
+                  owner,
+                  repo,
+                  base: branchTipSha,
+                  head: releaseHeadSha,
+                })
+
+                return data.status === 'ahead' || data.status === 'identical'
+              } catch (error) {
+                core.info(`Could not compare ${branchTipSha} to release head: ${error}`)
+                return false
+              }
+            }
+
+            async function wasMergedIntoRelease(branchName) {
+              const pulls = await github.paginate(github.rest.pulls.list, {
+                owner,
+                repo,
+                state: 'closed',
+                head: `${owner}:${branchName}`,
+                per_page: 100,
+              })
+
+              return pulls.some((pull) => {
+                if (!pull.merged_at) {
+                  return false
+                }
+
+                const baseRef = pull.base?.ref ?? ''
+                return baseRef === mergedBranch || baseRef.startsWith('release/v')
+              })
+            }
+
+            async function cleanupFeatureBranches() {
+              const { data: branches } = await github.rest.repos.listBranches({
+                owner,
+                repo,
+                per_page: 100,
+              })
+
+              for (const { name } of branches) {
+                if (!name.startsWith('feature/')) {
+                  continue
+                }
+
+                if (await wasMergedIntoRelease(name)) {
+                  core.info(`Deleting feature branch merged via release PR: ${name}`)
+                  await deleteBranch(name)
+                  continue
+                }
+
+                try {
+                  const { data: branch } = await github.rest.repos.getBranch({
+                    owner,
+                    repo,
+                    branch: name,
+                  })
+
+                  if (await isContainedInRelease(branch.commit.sha)) {
+                    core.info(`Deleting feature branch contained in release: ${name}`)
+                    await deleteBranch(name)
+                  }
+                } catch (error) {
+                  core.info(`Skipping feature branch ${name}: ${error}`)
+                }
+              }
+            }
+
+            await cleanupFeatureBranches()
             await deleteBranch(mergedBranch)
 
             const { data: branches } = await github.rest.repos.listBranches({
