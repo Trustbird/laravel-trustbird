@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [0.1.0-alpha.7] - Unpublished
+
+### Added
+
+- **Frameworks module**: Initial scaffolding for versioned frameworks, Trustbird-owned requirements and mappings to canonical objects.
+- **Interviews module**: Interview sessions with questions, answers, progress metadata and suggestion hooks for future policy/risk/measure/evidence generation.
+- **AI module**: Provider/prompt abstraction with suggestion-based AI output, approval workflow and audit logging.
+
 ## [0.1.0-alpha.6] - 2026-07-07
 
 ### Added
