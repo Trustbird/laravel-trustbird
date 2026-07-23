@@ -50,7 +50,7 @@ GitHub automations take over:
 - **Release changelog date** (`.github/workflows/release-changelog.yml`): on push to `release/v*`, replaces `Unpublished` with an ISO date.
 - **Release gating** (`.github/workflows/tests.yml`): PR checks fail if the changelog header for the release version is not publishable.
 - **Tagging** (`.github/workflows/release-tag.yml`): after merge to `main`, creates `v<version>` from the top dated changelog entry.
-- **Release cleanup** (`.github/workflows/release-cleanup.yml`): deletes merged `release/v*` branches (and other tagged release branches).
+- **Release cleanup** (`.github/workflows/release-cleanup.yml`): deletes merged `release/v*` branches and shipped `feature/*` branches after the release PR merges.
 
 ## Agent checklist
 
