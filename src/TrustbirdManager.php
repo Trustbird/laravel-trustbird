@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Trustbird;
 
 use Trustbird\Assets\Managers\AssetsManager;
+use Trustbird\Controls\Managers\ControlsManager;
+use Trustbird\Documents\Managers\DocumentsManager;
+use Trustbird\Evidence\Managers\EvidenceManager;
 use Trustbird\Incidents\Managers\IncidentsManager;
 use Trustbird\People\Managers\PeopleManager;
 use Trustbird\Policies\Managers\PoliciesManager;
+use Trustbird\Reviews\Managers\ReviewsManager;
 use Trustbird\Risks\Managers\RisksManager;
 use Trustbird\Suppliers\Managers\SuppliersManager;
 use Trustbird\Tasks\Managers\TasksManager;
@@ -31,6 +35,21 @@ final class TrustbirdManager
         return new AssetsManager;
     }
 
+    public function controls(): ControlsManager
+    {
+        return new ControlsManager;
+    }
+
+    public function documents(): DocumentsManager
+    {
+        return new DocumentsManager;
+    }
+
+    public function evidence(): EvidenceManager
+    {
+        return new EvidenceManager;
+    }
+
     public function teams(): TeamsManager
     {
         return new TeamsManager;
@@ -39,6 +58,11 @@ final class TrustbirdManager
     public function risks(): RisksManager
     {
         return new RisksManager;
+    }
+
+    public function reviews(): ReviewsManager
+    {
+        return new ReviewsManager;
     }
 
     public function policies(): PoliciesManager

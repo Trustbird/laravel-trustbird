@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [0.1.0-alpha.6] - Unpublished
+
+### Added
+
+- **Controls module**: Initial scaffolding for measures/controls with approval workflow and relation foundation.
+- **Documents module**: Initial scaffolding for controlled documents with versioning and review metadata.
+- **Evidence module**: Initial scaffolding for proof items with type/status concepts, review metadata and relations.
+- **Reviews module**: Reusable review scheduling, completion, reopening and reviewer assignments across domains.
+
 ## [0.1.0-alpha.5] - 2026-07-07
 
 ### Added
