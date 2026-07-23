@@ -1,8 +1,27 @@
 <?php
 
 use Trustbird\Assets\Enums\AssetKind;
+use Trustbird\Controls\Enums\ControlStatus;
+use Trustbird\Controls\Events\ControlApproved;
+use Trustbird\Controls\Models\Control;
+use Trustbird\Documents\Enums\DocumentVersionStatus;
+use Trustbird\Documents\Events\DocumentReviewed;
+use Trustbird\Documents\Events\DocumentVersionDrafted;
+use Trustbird\Documents\Events\DocumentVersionPublished;
+use Trustbird\Documents\Models\Document;
+use Trustbird\Documents\Models\DocumentVersion;
+use Trustbird\Evidence\Enums\EvidenceStatus;
+use Trustbird\Evidence\Enums\EvidenceType;
+use Trustbird\Evidence\Events\EvidenceReviewed;
+use Trustbird\Evidence\Models\Evidence;
 use Trustbird\People\Actions\MarkPersonnelTaskComplete;
 use Trustbird\People\Actions\RecordPersonnelReminder;
+use Trustbird\Reviews\Enums\ReviewerRole;
+use Trustbird\Reviews\Enums\ReviewStatus;
+use Trustbird\Reviews\Events\ReviewCompleted;
+use Trustbird\Reviews\Events\ReviewReopened;
+use Trustbird\Reviews\Events\ReviewScheduled;
+use Trustbird\Reviews\Models\Review;
 use Trustbird\Risks\Events\RiskReviewed;
 use Trustbird\Risks\Enums\RiskStatus;
 use Trustbird\Risks\Enums\RiskTreatment;
@@ -44,6 +63,23 @@ it('instantiates events', function (): void {
     expect(new PolicyVersionDrafted($policy, $version))->toBeInstanceOf(PolicyVersionDrafted::class);
     expect(new PolicyVersionUpdated($version))->toBeInstanceOf(PolicyVersionUpdated::class);
     expect(new PolicyVersionPublished($policy, $version))->toBeInstanceOf(PolicyVersionPublished::class);
+
+    $control = Control::factory()->make();
+    expect(new ControlApproved($control))->toBeInstanceOf(ControlApproved::class);
+
+    $document = Document::factory()->withDraftVersion()->create();
+    $documentVersion = $document->versions->first();
+    expect(new DocumentVersionDrafted($document, $documentVersion))->toBeInstanceOf(DocumentVersionDrafted::class);
+    expect(new DocumentVersionPublished($document, $documentVersion))->toBeInstanceOf(DocumentVersionPublished::class);
+    expect(new DocumentReviewed($document))->toBeInstanceOf(DocumentReviewed::class);
+
+    $evidence = Evidence::factory()->make();
+    expect(new EvidenceReviewed($evidence))->toBeInstanceOf(EvidenceReviewed::class);
+
+    $review = Review::factory()->make();
+    expect(new ReviewScheduled($review))->toBeInstanceOf(ReviewScheduled::class);
+    expect(new ReviewCompleted($review))->toBeInstanceOf(ReviewCompleted::class);
+    expect(new ReviewReopened($review))->toBeInstanceOf(ReviewReopened::class);
 });
 
 it('can instantiate service provider', function (): void {
@@ -106,4 +142,22 @@ it('covers all enums', function (): void {
 
     expect(TaskPriority::cases())->toBeArray()
         ->and(TaskPriority::Urgent->value)->toBe('urgent');
+
+    expect(ControlStatus::cases())->toBeArray()
+        ->and(ControlStatus::Active->value)->toBe('active');
+
+    expect(DocumentVersionStatus::cases())->toBeArray()
+        ->and(DocumentVersionStatus::Draft->value)->toBe('draft');
+
+    expect(EvidenceType::cases())->toBeArray()
+        ->and(EvidenceType::Link->value)->toBe('link');
+
+    expect(EvidenceStatus::cases())->toBeArray()
+        ->and(EvidenceStatus::Active->value)->toBe('active');
+
+    expect(ReviewStatus::cases())->toBeArray()
+        ->and(ReviewStatus::Scheduled->value)->toBe('scheduled');
+
+    expect(ReviewerRole::cases())->toBeArray()
+        ->and(ReviewerRole::Primary->value)->toBe('primary');
 });
