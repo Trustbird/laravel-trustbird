@@ -12,6 +12,7 @@ This repository is a Laravel package with strict conventions and a stable Develo
   - `.ai/coding-style.md`
   - `.ai/testing.md`
   - `.ai/package-development.md`
+  - `.ai/pr-review.md` (when reviewing or opening PRs)
 
 ### Core rules
 
@@ -20,6 +21,8 @@ This repository is a Laravel package with strict conventions and a stable Develo
 - Prefer additive migrations.
 - Keep models as persistence objects (casts + relationships + simple helpers only).
 - Maintain 100% test coverage.
+- Put shared AI guidance only in `.ai/` — never editor-specific agent config (no `.cursor/` skills/rules, etc.).
+- After creating any new pull request, run the review in `.ai/pr-review.md` before considering the PR ready.
 
 ### Before finishing any task
 
