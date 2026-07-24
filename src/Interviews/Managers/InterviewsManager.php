@@ -7,6 +7,7 @@ namespace Trustbird\Interviews\Managers;
 use DateTimeInterface;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Trustbird\Interviews\Actions\ArchiveInterview;
 use Trustbird\Interviews\Actions\CompleteInterview;
 use Trustbird\Interviews\Contracts\HasInterviewAnswers;
 use Trustbird\Interviews\Contracts\HasInterviewQuestions;
@@ -25,6 +26,10 @@ final readonly class InterviewsManager
         array $metadata = [],
         ?string $workspaceId = null,
     ): HasInterviews {
+        if ($status === InterviewStatus::Completed || $status === InterviewStatus::Archived) {
+            throw new InvalidArgumentException('Use complete() or archive() to finish an interview. Status cannot be set to completed or archived via create().');
+        }
+
         /** @var HasInterviews $model */
         $model = app(HasInterviews::class);
 
@@ -49,7 +54,7 @@ final readonly class InterviewsManager
         $this->assertInterviewIsMutable($interview);
 
         if ($status === InterviewStatus::Completed || $status === InterviewStatus::Archived) {
-            throw new InvalidArgumentException('Use complete() to finish an interview. Status cannot be set to completed or archived via update().');
+            throw new InvalidArgumentException('Use complete() or archive() to finish an interview. Status cannot be set to completed or archived via update().');
         }
 
         $attributes = array_filter([
@@ -149,6 +154,8 @@ final readonly class InterviewsManager
             throw new InvalidArgumentException('The question does not belong to this interview.');
         }
 
+        $this->assertSameWorkspace($interview->workspace_id, $question);
+
         return DB::transaction(function () use ($interview, $question, $value, $answeredById, $notes, $answeredAt, $metadata) {
             /** @var HasInterviewAnswers $model */
             $model = app(HasInterviewAnswers::class);
@@ -186,10 +193,26 @@ final readonly class InterviewsManager
         return app(CompleteInterview::class)->handle($interview);
     }
 
+    public function archive(HasInterviews $interview): HasInterviews
+    {
+        return app(ArchiveInterview::class)->handle($interview);
+    }
+
     private function assertInterviewIsMutable(HasInterviews $interview): void
     {
         if ($interview->status === InterviewStatus::Completed || $interview->status === InterviewStatus::Archived) {
             throw new InvalidArgumentException('Completed or archived interviews cannot be modified.');
+        }
+    }
+
+    private function assertSameWorkspace(?string $workspaceId, object $related): void
+    {
+        if ($workspaceId === null || ! isset($related->workspace_id) || $related->workspace_id === null) {
+            return;
+        }
+
+        if ($related->workspace_id !== $workspaceId) {
+            throw new InvalidArgumentException('Related object must belong to the same workspace.');
         }
     }
 

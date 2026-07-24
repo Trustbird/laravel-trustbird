@@ -15,8 +15,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ### Fixed
 
 - Framework mappings and AI suggestions reject cross-workspace related subjects.
-- Framework requirements/mappings are immutable on published versions; interview updates cannot bypass `complete()`.
+- Framework requirements/mappings are immutable on published versions; interview create/update cannot bypass `complete()` / `archive()`.
+- Interview answers and framework publish reject cross-workspace mismatches.
 - AI withdraw uses contracts/actions/events consistently with approve/reject; approve/reject audit writes are transactional.
+- Workspace factory slugs are unique to avoid flaky test collisions.
 
 ## [0.1.0-alpha.6] - 2026-07-07
 

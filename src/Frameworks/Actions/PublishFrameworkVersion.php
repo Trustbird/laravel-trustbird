@@ -25,6 +25,15 @@ final readonly class PublishFrameworkVersion
             throw new InvalidArgumentException('The framework version does not belong to this framework.');
         }
 
+        if (
+            $framework->workspace_id !== null
+            && isset($version->workspace_id)
+            && $version->workspace_id !== null
+            && $version->workspace_id !== $framework->workspace_id
+        ) {
+            throw new InvalidArgumentException('Related object must belong to the same workspace.');
+        }
+
         if (! $version->canBePublished()) {
             throw new InvalidArgumentException('Only draft framework versions can be published.');
         }

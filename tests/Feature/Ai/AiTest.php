@@ -135,7 +135,9 @@ test('it can withdraw a pending suggestion', function (): void {
         reviewNotes: 'Superseded by a better prompt.',
     );
 
-    expect($withdrawn->status)->toBe(AiSuggestionStatus::Withdrawn);
+    expect($withdrawn->status)->toBe(AiSuggestionStatus::Withdrawn)
+        ->and($withdrawn->isWithdrawn())->toBeTrue()
+        ->and($withdrawn->isRejected())->toBeFalse();
 
     Event::assertDispatched(AiSuggestionWithdrawn::class);
 });

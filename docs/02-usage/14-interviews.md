@@ -51,6 +51,10 @@ Trustbird::interviews()->answer(
 
 ### Complete the session
 
+`complete()` requires every question with `is_required: true` to have an answer. Do not set `Completed` or `Archived` via `create()` / `update()` — use `complete()` and `archive()`.
+
 ```php
 Trustbird::interviews()->complete(interview: $interview);
+
+Trustbird::interviews()->archive(interview: $interview);
 ```

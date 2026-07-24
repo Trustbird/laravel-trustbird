@@ -7,11 +7,13 @@ use Trustbird\Facades\Trustbird;
 use Trustbird\Interviews\Enums\InterviewQuestionType;
 use Trustbird\Interviews\Enums\InterviewStatus;
 use Trustbird\Interviews\Enums\InterviewSuggestionDomain;
+use Trustbird\Interviews\Events\InterviewArchived;
 use Trustbird\Interviews\Events\InterviewCompleted;
 use Trustbird\Interviews\Models\Interview;
 use Trustbird\Interviews\Models\InterviewAnswer;
 use Trustbird\Interviews\Models\InterviewQuestion;
 use Trustbird\People\Models\Person;
+use Trustbird\Workspaces\Models\Workspace;
 
 beforeEach(fn () => Event::fake());
 
@@ -155,7 +157,69 @@ test('it cannot set completed status via update', function (): void {
         interview: $interview,
         status: InterviewStatus::Completed,
     );
-})->throws(InvalidArgumentException::class, 'Use complete() to finish an interview. Status cannot be set to completed or archived via update().');
+})->throws(InvalidArgumentException::class, 'Use complete() or archive() to finish an interview. Status cannot be set to completed or archived via update().');
+
+test('it cannot create an interview as completed or archived', function (): void {
+    Trustbird::interviews()->create(
+        title: 'Already done',
+        status: InterviewStatus::Completed,
+    );
+})->throws(InvalidArgumentException::class, 'Use complete() or archive() to finish an interview. Status cannot be set to completed or archived via create().');
+
+test('it can archive an interview and dispatches event', function (): void {
+    $interview = Interview::factory()->completed()->create();
+
+    $archived = Trustbird::interviews()->archive(interview: $interview);
+
+    expect($archived->status)->toBe(InterviewStatus::Archived)
+        ->and($archived->isArchived())->toBeTrue();
+
+    Event::assertDispatched(InterviewArchived::class);
+});
+
+test('it cannot archive an already archived interview', function (): void {
+    $interview = Interview::factory()->create(['status' => InterviewStatus::Archived]);
+
+    Trustbird::interviews()->archive(interview: $interview);
+})->throws(InvalidArgumentException::class, 'This interview is already archived.');
+
+test('it cannot create an interview as archived', function (): void {
+    Trustbird::interviews()->create(
+        title: 'Already archived',
+        status: InterviewStatus::Archived,
+    );
+})->throws(InvalidArgumentException::class, 'Use complete() or archive() to finish an interview. Status cannot be set to completed or archived via create().');
+
+test('it cannot answer a question from another workspace', function (): void {
+    $interview = Interview::factory()->create();
+    $question = InterviewQuestion::factory()->create([
+        'interview_id' => $interview->id,
+        'workspace_id' => Workspace::factory()->create()->id,
+    ]);
+
+    Trustbird::interviews()->answer(
+        interview: $interview,
+        question: $question,
+        value: 'nope',
+    );
+})->throws(InvalidArgumentException::class, 'Related object must belong to the same workspace.');
+
+test('it allows answering when the question has no workspace id', function (): void {
+    $interview = Interview::factory()->create();
+    $question = Trustbird::interviews()->addQuestion(
+        interview: $interview,
+        prompt: 'Optional workspace?',
+    );
+    $question->forceFill(['workspace_id' => null])->saveQuietly();
+
+    $answer = Trustbird::interviews()->answer(
+        interview: $interview,
+        question: $question->fresh(),
+        value: 'ok',
+    );
+
+    expect($answer->value)->toBe(['value' => 'ok']);
+});
 
 test('it cannot modify a completed interview', function (): void {
     $interview = Interview::factory()->completed()->create();

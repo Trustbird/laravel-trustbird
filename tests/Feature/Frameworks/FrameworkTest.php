@@ -210,6 +210,19 @@ test('it allows mapping when the related object has no workspace id', function (
         ->and($mapping->workspace_id)->toBe($requirement->workspace_id);
 });
 
+test('it cannot publish a version from another workspace', function (): void {
+    $framework = Framework::factory()->create();
+    $foreignVersion = FrameworkVersion::factory()->create([
+        'framework_id' => $framework->id,
+        'status' => FrameworkVersionStatus::Draft,
+    ]);
+
+    Trustbird::frameworks()->publishVersion(
+        framework: $framework,
+        version: $foreignVersion,
+    );
+})->throws(InvalidArgumentException::class, 'Related object must belong to the same workspace.');
+
 test('it covers framework model helpers and factories', function (): void {
     $owner = Person::factory()->create();
     $publisher = Person::factory()->create(['workspace_id' => $owner->workspace_id]);

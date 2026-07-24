@@ -27,4 +27,8 @@ interface HasAiSuggestions
     public function isPending(): bool;
 
     public function isApproved(): bool;
+
+    public function isRejected(): bool;
+
+    public function isWithdrawn(): bool;
 }

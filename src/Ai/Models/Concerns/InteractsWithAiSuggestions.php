@@ -96,6 +96,11 @@ trait InteractsWithAiSuggestions
         return $this->status === AiSuggestionStatus::Rejected;
     }
 
+    public function isWithdrawn(): bool
+    {
+        return $this->status === AiSuggestionStatus::Withdrawn;
+    }
+
     protected static function newFactory(): AiSuggestionFactory
     {
         return AiSuggestionFactory::new();

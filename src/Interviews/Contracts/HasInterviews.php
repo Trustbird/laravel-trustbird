@@ -21,5 +21,7 @@ interface HasInterviews
 
     public function isInProgress(): bool;
 
+    public function isArchived(): bool;
+
     public function progressPercent(): int;
 }

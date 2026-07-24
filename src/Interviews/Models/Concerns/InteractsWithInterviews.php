@@ -64,6 +64,11 @@ trait InteractsWithInterviews
         return $this->status === InterviewStatus::InProgress;
     }
 
+    public function isArchived(): bool
+    {
+        return $this->status === InterviewStatus::Archived;
+    }
+
     public function progressPercent(): int
     {
         $questionCount = (int) $this->getAttribute('question_count');

@@ -30,6 +30,7 @@ use Trustbird\Frameworks\Models\Framework;
 use Trustbird\Interviews\Enums\InterviewQuestionType;
 use Trustbird\Interviews\Enums\InterviewStatus;
 use Trustbird\Interviews\Enums\InterviewSuggestionDomain;
+use Trustbird\Interviews\Events\InterviewArchived;
 use Trustbird\Interviews\Events\InterviewCompleted;
 use Trustbird\Interviews\Models\Interview;
 use Trustbird\People\Actions\MarkPersonnelTaskComplete;
@@ -101,6 +102,7 @@ it('instantiates events', function (): void {
 
     $interview = Interview::factory()->make();
     expect(new InterviewCompleted($interview))->toBeInstanceOf(InterviewCompleted::class);
+    expect(new InterviewArchived($interview))->toBeInstanceOf(InterviewArchived::class);
 
     $aiSuggestion = AiSuggestion::factory()->make();
     expect(new AiSuggestionApproved($aiSuggestion))->toBeInstanceOf(AiSuggestionApproved::class);
