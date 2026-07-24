@@ -21,7 +21,7 @@ final class WorkspaceFactory extends Factory
 
         return [
             'name' => $name,
-            'slug' => Str::slug($name),
+            'slug' => Str::slug($name).'-'.$this->faker->unique()->numerify('######'),
             'description' => $this->faker->sentence(),
             'metadata' => [],
         ];
