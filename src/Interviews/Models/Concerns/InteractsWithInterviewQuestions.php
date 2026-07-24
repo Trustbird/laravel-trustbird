@@ -7,10 +7,10 @@ namespace Trustbird\Interviews\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Trustbird\Database\Factories\Interview\InterviewQuestionFactory;
+use Trustbird\Interviews\Contracts\HasInterviewAnswers;
+use Trustbird\Interviews\Contracts\HasInterviews;
 use Trustbird\Interviews\Enums\InterviewQuestionType;
 use Trustbird\Interviews\Enums\InterviewSuggestionDomain;
-use Trustbird\Interviews\Models\Interview;
-use Trustbird\Interviews\Models\InterviewAnswer;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
 trait InteractsWithInterviewQuestions
@@ -43,12 +43,12 @@ trait InteractsWithInterviewQuestions
 
     public function interview(): BelongsTo
     {
-        return $this->belongsTo(Interview::class);
+        return $this->belongsTo(app(HasInterviews::class)::class);
     }
 
     public function answer(): HasOne
     {
-        return $this->hasOne(InterviewAnswer::class, 'question_id');
+        return $this->hasOne(app(HasInterviewAnswers::class)::class, 'question_id');
     }
 
     protected static function newFactory(): InterviewQuestionFactory

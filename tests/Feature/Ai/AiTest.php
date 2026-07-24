@@ -10,6 +10,7 @@ use Trustbird\Ai\Enums\AiSuggestionLogEvent;
 use Trustbird\Ai\Enums\AiSuggestionStatus;
 use Trustbird\Ai\Events\AiSuggestionApproved;
 use Trustbird\Ai\Events\AiSuggestionRejected;
+use Trustbird\Ai\Events\AiSuggestionWithdrawn;
 use Trustbird\Ai\Models\AiPrompt;
 use Trustbird\Ai\Models\AiProvider;
 use Trustbird\Ai\Models\AiSuggestion;
@@ -17,6 +18,7 @@ use Trustbird\Ai\Models\AiSuggestionLog;
 use Trustbird\Controls\Models\Control;
 use Trustbird\Facades\Trustbird;
 use Trustbird\People\Models\Person;
+use Trustbird\Workspaces\Models\Workspace;
 
 beforeEach(fn () => Event::fake());
 
@@ -134,6 +136,8 @@ test('it can withdraw a pending suggestion', function (): void {
     );
 
     expect($withdrawn->status)->toBe(AiSuggestionStatus::Withdrawn);
+
+    Event::assertDispatched(AiSuggestionWithdrawn::class);
 });
 
 test('it cannot withdraw a non-pending suggestion', function (): void {
@@ -141,6 +145,46 @@ test('it cannot withdraw a non-pending suggestion', function (): void {
 
     Trustbird::ai()->withdraw(suggestion: $suggestion);
 })->throws(InvalidArgumentException::class, 'Only pending AI suggestions can be withdrawn.');
+
+test('it cannot suggest with a subject from another workspace', function (): void {
+    $providerWorkspace = Workspace::factory()->create();
+    $provider = Trustbird::ai()->registerProvider(
+        name: 'Custom',
+        driver: AiProviderDriver::Custom,
+        workspaceId: $providerWorkspace->id,
+    );
+    $control = Control::factory()->create();
+
+    Trustbird::ai()->suggest(
+        output: ['text' => 'Cross-tenant'],
+        provider: $provider,
+        subject: $control,
+    );
+})->throws(InvalidArgumentException::class, 'Related object must belong to the same workspace.');
+
+test('it allows suggesting when the subject has no workspace id', function (): void {
+    $provider = Trustbird::ai()->registerProvider(
+        name: 'Custom',
+        driver: AiProviderDriver::Custom,
+        workspaceId: Workspace::factory()->create()->id,
+    );
+
+    $subject = new class
+    {
+        public string $id = 'subject-without-workspace';
+
+        public ?string $workspace_id = null;
+    };
+
+    $suggestion = Trustbird::ai()->suggest(
+        output: ['text' => 'No subject workspace'],
+        provider: $provider,
+        subject: $subject,
+    );
+
+    expect($suggestion->workspace_id)->toBe($provider->workspace_id)
+        ->and($suggestion->subject_id)->toBe('subject-without-workspace');
+});
 
 test('it can update providers and prompts', function (): void {
     $provider = Trustbird::ai()->registerProvider(name: 'Old');

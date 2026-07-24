@@ -10,28 +10,27 @@ use Trustbird\Ai\Contracts\HasAiSuggestionLogs;
 use Trustbird\Ai\Contracts\HasAiSuggestions;
 use Trustbird\Ai\Enums\AiSuggestionLogEvent;
 use Trustbird\Ai\Enums\AiSuggestionStatus;
-use Trustbird\Ai\Events\AiSuggestionRejected;
+use Trustbird\Ai\Events\AiSuggestionWithdrawn;
 
-final readonly class RejectAiSuggestion
+final readonly class WithdrawAiSuggestion
 {
     /**
      * @param array{
      *     reviewed_by_id?: string|null,
-     *     reviewed_at?: \DateTimeInterface|null,
      *     review_notes?: string|null,
      * } $attributes
      */
     public function handle(HasAiSuggestions $suggestion, array $attributes = []): HasAiSuggestions
     {
         if ($suggestion->status !== AiSuggestionStatus::Pending) {
-            throw new InvalidArgumentException('Only pending AI suggestions can be rejected.');
+            throw new InvalidArgumentException('Only pending AI suggestions can be withdrawn.');
         }
 
         return DB::transaction(function () use ($suggestion, $attributes): HasAiSuggestions {
             $suggestion->update([
-                'status' => AiSuggestionStatus::Rejected,
+                'status' => AiSuggestionStatus::Withdrawn,
                 'reviewed_by_id' => $attributes['reviewed_by_id'] ?? null,
-                'reviewed_at' => $attributes['reviewed_at'] ?? now(),
+                'reviewed_at' => now(),
                 'review_notes' => $attributes['review_notes'] ?? null,
             ]);
 
@@ -40,14 +39,14 @@ final readonly class RejectAiSuggestion
             $logModel->query()->create([
                 'workspace_id' => $suggestion->workspace_id,
                 'suggestion_id' => $suggestion->id,
-                'event' => AiSuggestionLogEvent::Rejected,
+                'event' => AiSuggestionLogEvent::Withdrawn,
                 'actor_id' => $attributes['reviewed_by_id'] ?? null,
                 'payload' => [
-                    'status' => AiSuggestionStatus::Rejected->value,
+                    'status' => AiSuggestionStatus::Withdrawn->value,
                 ],
             ]);
 
-            AiSuggestionRejected::dispatch($suggestion);
+            AiSuggestionWithdrawn::dispatch($suggestion);
 
             return $suggestion;
         });

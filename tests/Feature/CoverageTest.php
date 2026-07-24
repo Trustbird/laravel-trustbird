@@ -6,6 +6,7 @@ use Trustbird\Ai\Enums\AiSuggestionLogEvent;
 use Trustbird\Ai\Enums\AiSuggestionStatus;
 use Trustbird\Ai\Events\AiSuggestionApproved;
 use Trustbird\Ai\Events\AiSuggestionRejected;
+use Trustbird\Ai\Events\AiSuggestionWithdrawn;
 use Trustbird\Ai\Models\AiSuggestion;
 use Trustbird\Assets\Enums\AssetKind;
 use Trustbird\Controls\Enums\ControlStatus;
@@ -104,6 +105,7 @@ it('instantiates events', function (): void {
     $aiSuggestion = AiSuggestion::factory()->make();
     expect(new AiSuggestionApproved($aiSuggestion))->toBeInstanceOf(AiSuggestionApproved::class);
     expect(new AiSuggestionRejected($aiSuggestion))->toBeInstanceOf(AiSuggestionRejected::class);
+    expect(new AiSuggestionWithdrawn($aiSuggestion))->toBeInstanceOf(AiSuggestionWithdrawn::class);
 
     $review = Review::factory()->make();
     expect(new ReviewScheduled($review))->toBeInstanceOf(ReviewScheduled::class);

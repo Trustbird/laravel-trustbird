@@ -7,9 +7,9 @@ namespace Trustbird\Interviews\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Trustbird\Database\Factories\Interview\InterviewFactory;
+use Trustbird\Interviews\Contracts\HasInterviewAnswers;
+use Trustbird\Interviews\Contracts\HasInterviewQuestions;
 use Trustbird\Interviews\Enums\InterviewStatus;
-use Trustbird\Interviews\Models\InterviewAnswer;
-use Trustbird\Interviews\Models\InterviewQuestion;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
@@ -46,12 +46,12 @@ trait InteractsWithInterviews
 
     public function questions(): HasMany
     {
-        return $this->hasMany(InterviewQuestion::class);
+        return $this->hasMany(app(HasInterviewQuestions::class)::class);
     }
 
     public function answers(): HasMany
     {
-        return $this->hasMany(InterviewAnswer::class);
+        return $this->hasMany(app(HasInterviewAnswers::class)::class);
     }
 
     public function isCompleted(): bool

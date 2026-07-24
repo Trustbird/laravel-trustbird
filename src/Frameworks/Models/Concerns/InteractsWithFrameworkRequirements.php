@@ -7,8 +7,8 @@ namespace Trustbird\Frameworks\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Trustbird\Database\Factories\Framework\FrameworkRequirementFactory;
-use Trustbird\Frameworks\Models\FrameworkMapping;
-use Trustbird\Frameworks\Models\FrameworkVersion;
+use Trustbird\Frameworks\Contracts\HasFrameworkMappings;
+use Trustbird\Frameworks\Contracts\HasFrameworkVersions;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
 trait InteractsWithFrameworkRequirements
@@ -33,12 +33,12 @@ trait InteractsWithFrameworkRequirements
 
     public function version(): BelongsTo
     {
-        return $this->belongsTo(FrameworkVersion::class, 'framework_version_id');
+        return $this->belongsTo(app(HasFrameworkVersions::class)::class, 'framework_version_id');
     }
 
     public function mappings(): HasMany
     {
-        return $this->hasMany(FrameworkMapping::class, 'requirement_id');
+        return $this->hasMany(app(HasFrameworkMappings::class)::class, 'requirement_id');
     }
 
     protected static function newFactory(): FrameworkRequirementFactory

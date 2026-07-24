@@ -6,14 +6,14 @@ namespace Trustbird\Frameworks\Managers;
 
 use DateTimeInterface;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Trustbird\Frameworks\Actions\DraftFrameworkVersion;
 use Trustbird\Frameworks\Actions\PublishFrameworkVersion;
 use Trustbird\Frameworks\Contracts\HasFrameworkMappings;
 use Trustbird\Frameworks\Contracts\HasFrameworkRequirements;
 use Trustbird\Frameworks\Contracts\HasFrameworks;
+use Trustbird\Frameworks\Contracts\HasFrameworkVersions;
 use Trustbird\Frameworks\Enums\FrameworkMappingCoverage;
-use Trustbird\Frameworks\Models\FrameworkRequirement;
-use Trustbird\Frameworks\Models\FrameworkVersion;
 
 final readonly class FrameworksManager
 {
@@ -77,7 +77,7 @@ final readonly class FrameworksManager
         HasFrameworks $framework,
         string $versionLabel,
         ?string $changeSummary = null,
-    ): FrameworkVersion {
+    ): HasFrameworkVersions {
         return app(DraftFrameworkVersion::class)->handle($framework, [
             'version_label' => $versionLabel,
             'change_summary' => $changeSummary,
@@ -86,10 +86,10 @@ final readonly class FrameworksManager
 
     public function publishVersion(
         HasFrameworks $framework,
-        FrameworkVersion $version,
+        HasFrameworkVersions $version,
         ?DateTimeInterface $publishedAt = null,
         ?string $publishedById = null,
-    ): FrameworkVersion {
+    ): HasFrameworkVersions {
         return app(PublishFrameworkVersion::class)->handle($framework, $version, array_filter([
             'published_at' => $publishedAt,
             'published_by_id' => $publishedById,
@@ -97,13 +97,15 @@ final readonly class FrameworksManager
     }
 
     public function addRequirement(
-        FrameworkVersion $version,
+        HasFrameworkVersions $version,
         string $title,
         ?string $code = null,
         ?string $summary = null,
         int $position = 0,
         array $metadata = [],
     ): HasFrameworkRequirements {
+        $this->assertVersionIsDraft($version);
+
         /** @var HasFrameworkRequirements $model */
         $model = app(HasFrameworkRequirements::class);
 
@@ -126,6 +128,8 @@ final readonly class FrameworksManager
         ?int $position = null,
         ?array $metadata = null,
     ): HasFrameworkRequirements {
+        $this->assertVersionIsDraft($requirement->version);
+
         $attributes = array_filter([
             'title' => $title,
             'code' => $code,
@@ -140,11 +144,14 @@ final readonly class FrameworksManager
     }
 
     public function map(
-        FrameworkRequirement $requirement,
+        HasFrameworkRequirements $requirement,
         object $related,
         FrameworkMappingCoverage $coverage = FrameworkMappingCoverage::Planned,
         array $metadata = [],
     ): HasFrameworkMappings {
+        $this->assertVersionIsDraft($requirement->version);
+        $this->assertSameWorkspace($requirement->workspace_id, $related);
+
         /** @var HasFrameworkMappings $model */
         $model = app(HasFrameworkMappings::class);
 
@@ -156,5 +163,23 @@ final readonly class FrameworksManager
             'coverage' => $coverage,
             'metadata' => $metadata,
         ]);
+    }
+
+    private function assertVersionIsDraft(HasFrameworkVersions $version): void
+    {
+        if (! $version->isDraft()) {
+            throw new InvalidArgumentException('Only draft framework versions can be modified.');
+        }
+    }
+
+    private function assertSameWorkspace(?string $workspaceId, object $related): void
+    {
+        if ($workspaceId === null || ! isset($related->workspace_id) || $related->workspace_id === null) {
+            return;
+        }
+
+        if ($related->workspace_id !== $workspaceId) {
+            throw new InvalidArgumentException('Related object must belong to the same workspace.');
+        }
     }
 }

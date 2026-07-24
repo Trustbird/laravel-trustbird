@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Trustbird\Frameworks\Actions;
 
 use Trustbird\Frameworks\Contracts\HasFrameworks;
+use Trustbird\Frameworks\Contracts\HasFrameworkVersions;
 use Trustbird\Frameworks\Enums\FrameworkVersionStatus;
 use Trustbird\Frameworks\Events\FrameworkVersionDrafted;
-use Trustbird\Frameworks\Models\FrameworkVersion;
 
 final readonly class DraftFrameworkVersion
 {
@@ -18,9 +18,12 @@ final readonly class DraftFrameworkVersion
      *     metadata?: array|null,
      * } $attributes
      */
-    public function handle(HasFrameworks $framework, array $attributes): FrameworkVersion
+    public function handle(HasFrameworks $framework, array $attributes): HasFrameworkVersions
     {
-        $version = FrameworkVersion::query()->create([
+        /** @var HasFrameworkVersions $model */
+        $model = app(HasFrameworkVersions::class);
+
+        $version = $model->query()->create([
             'workspace_id' => $framework->workspace_id,
             'framework_id' => $framework->id,
             'version_label' => $attributes['version_label'],

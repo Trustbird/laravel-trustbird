@@ -13,6 +13,4 @@ enum AiSuggestionLogEvent: string
     case Rejected = 'rejected';
 
     case Withdrawn = 'withdrawn';
-
-    case Updated = 'updated';
 }

@@ -7,8 +7,8 @@ namespace Trustbird\Frameworks\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Trustbird\Database\Factories\Framework\FrameworkMappingFactory;
+use Trustbird\Frameworks\Contracts\HasFrameworkRequirements;
 use Trustbird\Frameworks\Enums\FrameworkMappingCoverage;
-use Trustbird\Frameworks\Models\FrameworkRequirement;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
 trait InteractsWithFrameworkMappings
@@ -33,7 +33,7 @@ trait InteractsWithFrameworkMappings
 
     public function requirement(): BelongsTo
     {
-        return $this->belongsTo(FrameworkRequirement::class, 'requirement_id');
+        return $this->belongsTo(app(HasFrameworkRequirements::class)::class, 'requirement_id');
     }
 
     public function related(): MorphTo

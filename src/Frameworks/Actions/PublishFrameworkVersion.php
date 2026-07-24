@@ -7,9 +7,9 @@ namespace Trustbird\Frameworks\Actions;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Trustbird\Frameworks\Contracts\HasFrameworks;
+use Trustbird\Frameworks\Contracts\HasFrameworkVersions;
 use Trustbird\Frameworks\Enums\FrameworkVersionStatus;
 use Trustbird\Frameworks\Events\FrameworkVersionPublished;
-use Trustbird\Frameworks\Models\FrameworkVersion;
 
 final readonly class PublishFrameworkVersion
 {
@@ -19,7 +19,7 @@ final readonly class PublishFrameworkVersion
      *     published_by_id?: string|null,
      * } $attributes
      */
-    public function handle(HasFrameworks $framework, FrameworkVersion $version, array $attributes = []): FrameworkVersion
+    public function handle(HasFrameworks $framework, HasFrameworkVersions $version, array $attributes = []): HasFrameworkVersions
     {
         if ($version->framework_id !== $framework->id) {
             throw new InvalidArgumentException('The framework version does not belong to this framework.');
@@ -29,9 +29,11 @@ final readonly class PublishFrameworkVersion
             throw new InvalidArgumentException('Only draft framework versions can be published.');
         }
 
-        return DB::transaction(function () use ($framework, $version, $attributes): FrameworkVersion {
+        return DB::transaction(function () use ($framework, $version, $attributes): HasFrameworkVersions {
             if ($framework->current_version_id !== null) {
-                FrameworkVersion::query()
+                /** @var HasFrameworkVersions $versionModel */
+                $versionModel = app(HasFrameworkVersions::class);
+                $versionModel->query()
                     ->whereKey($framework->current_version_id)
                     ->update(['status' => FrameworkVersionStatus::Superseded]);
             }

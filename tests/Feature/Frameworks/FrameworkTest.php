@@ -161,6 +161,55 @@ test('it can map a requirement to a canonical Trustbird object', function (): vo
     Event::assertDispatched('eloquent.created: '.FrameworkMapping::class);
 });
 
+test('it cannot map a requirement to an object from another workspace', function (): void {
+    $framework = Framework::factory()->withDraftVersion()->create();
+    $version = $framework->versions->first();
+    $requirement = Trustbird::frameworks()->addRequirement(
+        version: $version,
+        title: 'Encrypt portable devices',
+    );
+    $control = Control::factory()->create();
+
+    Trustbird::frameworks()->map(
+        requirement: $requirement,
+        related: $control,
+    );
+})->throws(InvalidArgumentException::class, 'Related object must belong to the same workspace.');
+
+test('it cannot modify requirements on a published framework version', function (): void {
+    $framework = Framework::factory()->withPublishedVersion()->create();
+    $version = $framework->currentVersion;
+
+    Trustbird::frameworks()->addRequirement(
+        version: $version,
+        title: 'Should not be allowed',
+    );
+})->throws(InvalidArgumentException::class, 'Only draft framework versions can be modified.');
+
+test('it allows mapping when the related object has no workspace id', function (): void {
+    $framework = Framework::factory()->withDraftVersion()->create();
+    $version = $framework->versions->first();
+    $requirement = Trustbird::frameworks()->addRequirement(
+        version: $version,
+        title: 'Encrypt portable devices',
+    );
+
+    $related = new class
+    {
+        public string $id = 'related-without-workspace';
+
+        public ?string $workspace_id = null;
+    };
+
+    $mapping = Trustbird::frameworks()->map(
+        requirement: $requirement,
+        related: $related,
+    );
+
+    expect($mapping->related_id)->toBe('related-without-workspace')
+        ->and($mapping->workspace_id)->toBe($requirement->workspace_id);
+});
+
 test('it covers framework model helpers and factories', function (): void {
     $owner = Person::factory()->create();
     $publisher = Person::factory()->create(['workspace_id' => $owner->workspace_id]);

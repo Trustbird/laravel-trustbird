@@ -6,8 +6,8 @@ namespace Trustbird\Interviews\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Trustbird\Database\Factories\Interview\InterviewAnswerFactory;
-use Trustbird\Interviews\Models\Interview;
-use Trustbird\Interviews\Models\InterviewQuestion;
+use Trustbird\Interviews\Contracts\HasInterviewQuestions;
+use Trustbird\Interviews\Contracts\HasInterviews;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
@@ -36,12 +36,12 @@ trait InteractsWithInterviewAnswers
 
     public function interview(): BelongsTo
     {
-        return $this->belongsTo(Interview::class);
+        return $this->belongsTo(app(HasInterviews::class)::class);
     }
 
     public function question(): BelongsTo
     {
-        return $this->belongsTo(InterviewQuestion::class, 'question_id');
+        return $this->belongsTo(app(HasInterviewQuestions::class)::class, 'question_id');
     }
 
     public function answeredBy(): BelongsTo

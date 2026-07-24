@@ -7,11 +7,11 @@ namespace Trustbird\Ai\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Trustbird\Ai\Contracts\HasAiPrompts;
+use Trustbird\Ai\Contracts\HasAiProviders;
+use Trustbird\Ai\Contracts\HasAiSuggestionLogs;
 use Trustbird\Ai\Enums\AiSuggestionKind;
 use Trustbird\Ai\Enums\AiSuggestionStatus;
-use Trustbird\Ai\Models\AiPrompt;
-use Trustbird\Ai\Models\AiProvider;
-use Trustbird\Ai\Models\AiSuggestionLog;
 use Trustbird\Database\Factories\Ai\AiSuggestionFactory;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
@@ -53,12 +53,12 @@ trait InteractsWithAiSuggestions
 
     public function provider(): BelongsTo
     {
-        return $this->belongsTo(AiProvider::class, 'provider_id');
+        return $this->belongsTo(app(HasAiProviders::class)::class, 'provider_id');
     }
 
     public function prompt(): BelongsTo
     {
-        return $this->belongsTo(AiPrompt::class, 'prompt_id');
+        return $this->belongsTo(app(HasAiPrompts::class)::class, 'prompt_id');
     }
 
     public function subject(): MorphTo
@@ -78,7 +78,7 @@ trait InteractsWithAiSuggestions
 
     public function logs(): HasMany
     {
-        return $this->hasMany(AiSuggestionLog::class, 'suggestion_id');
+        return $this->hasMany(app(HasAiSuggestionLogs::class)::class, 'suggestion_id');
     }
 
     public function isPending(): bool

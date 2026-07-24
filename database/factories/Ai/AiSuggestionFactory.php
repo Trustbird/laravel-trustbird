@@ -7,10 +7,7 @@ namespace Trustbird\Database\Factories\Ai;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Trustbird\Ai\Enums\AiSuggestionKind;
 use Trustbird\Ai\Enums\AiSuggestionStatus;
-use Trustbird\Ai\Models\AiPrompt;
-use Trustbird\Ai\Models\AiProvider;
 use Trustbird\Ai\Models\AiSuggestion;
-use Trustbird\People\Models\Person;
 use Trustbird\Workspaces\Models\Workspace;
 
 /**
@@ -24,15 +21,12 @@ final class AiSuggestionFactory extends Factory
     {
         return [
             'workspace_id' => Workspace::factory(),
-            'provider_id' => AiProvider::factory(),
-            'prompt_id' => AiPrompt::factory(),
             'kind' => AiSuggestionKind::General,
             'status' => AiSuggestionStatus::Pending,
             'title' => $this->faker->sentence(4),
             'input' => ['context' => 'demo'],
             'output' => ['text' => $this->faker->paragraph()],
             'model_name' => 'demo-model',
-            'created_by_id' => Person::factory(),
             'metadata' => [],
         ];
     }

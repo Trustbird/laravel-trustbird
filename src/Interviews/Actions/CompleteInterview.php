@@ -21,6 +21,15 @@ final readonly class CompleteInterview
             throw new InvalidArgumentException('Archived interviews cannot be completed.');
         }
 
+        $missingRequired = $interview->questions()
+            ->where('is_required', true)
+            ->whereDoesntHave('answer')
+            ->exists();
+
+        if ($missingRequired) {
+            throw new InvalidArgumentException('All required questions must be answered before completing the interview.');
+        }
+
         $interview->update([
             'status' => InterviewStatus::Completed,
             'completed_at' => now(),

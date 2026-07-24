@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Trustbird\Ai\Actions\ApproveAiSuggestion;
 use Trustbird\Ai\Actions\RejectAiSuggestion;
+use Trustbird\Ai\Actions\WithdrawAiSuggestion;
 use Trustbird\Ai\Contracts\HasAiPrompts;
 use Trustbird\Ai\Contracts\HasAiProviders;
 use Trustbird\Ai\Contracts\HasAiSuggestionLogs;
@@ -17,7 +18,6 @@ use Trustbird\Ai\Enums\AiProviderDriver;
 use Trustbird\Ai\Enums\AiSuggestionKind;
 use Trustbird\Ai\Enums\AiSuggestionLogEvent;
 use Trustbird\Ai\Enums\AiSuggestionStatus;
-use Trustbird\Ai\Models\AiSuggestion;
 
 final readonly class AiManager
 {
@@ -126,11 +126,20 @@ final readonly class AiManager
         ?string $workspaceId = null,
     ): HasAiSuggestions {
         return DB::transaction(function () use ($output, $kind, $provider, $prompt, $subject, $title, $input, $modelName, $providerReference, $createdById, $metadata, $workspaceId) {
+            $resolvedWorkspaceId = $workspaceId
+                ?? $provider?->workspace_id
+                ?? $prompt?->workspace_id
+                ?? (isset($subject->workspace_id) ? $subject->workspace_id : null);
+
+            $this->assertSameWorkspace($resolvedWorkspaceId, $provider);
+            $this->assertSameWorkspace($resolvedWorkspaceId, $prompt);
+            $this->assertSameWorkspace($resolvedWorkspaceId, $subject);
+
             /** @var HasAiSuggestions $model */
             $model = app(HasAiSuggestions::class);
 
             $suggestion = $model->query()->create([
-                'workspace_id' => $workspaceId ?? $provider?->workspace_id ?? $prompt?->workspace_id ?? ($subject->workspace_id ?? null),
+                'workspace_id' => $resolvedWorkspaceId,
                 'provider_id' => $provider?->id,
                 'prompt_id' => $prompt?->id,
                 'kind' => $kind,
@@ -190,35 +199,28 @@ final readonly class AiManager
     }
 
     public function withdraw(
-        AiSuggestion $suggestion,
+        HasAiSuggestions $suggestion,
         ?string $actorId = null,
         ?string $reviewNotes = null,
     ): HasAiSuggestions {
-        if ($suggestion->status !== AiSuggestionStatus::Pending) {
-            throw new InvalidArgumentException('Only pending AI suggestions can be withdrawn.');
+        return app(WithdrawAiSuggestion::class)->handle($suggestion, array_filter([
+            'reviewed_by_id' => $actorId,
+            'review_notes' => $reviewNotes,
+        ], fn ($value) => $value !== null));
+    }
+
+    private function assertSameWorkspace(?string $workspaceId, ?object $related): void
+    {
+        if ($related === null || $workspaceId === null) {
+            return;
         }
 
-        return DB::transaction(function () use ($suggestion, $actorId, $reviewNotes) {
-            $suggestion->update([
-                'status' => AiSuggestionStatus::Withdrawn,
-                'reviewed_by_id' => $actorId,
-                'reviewed_at' => now(),
-                'review_notes' => $reviewNotes,
-            ]);
+        if (! isset($related->workspace_id) || $related->workspace_id === null) {
+            return;
+        }
 
-            /** @var HasAiSuggestionLogs $logModel */
-            $logModel = app(HasAiSuggestionLogs::class);
-            $logModel->query()->create([
-                'workspace_id' => $suggestion->workspace_id,
-                'suggestion_id' => $suggestion->id,
-                'event' => AiSuggestionLogEvent::Withdrawn,
-                'actor_id' => $actorId,
-                'payload' => [
-                    'status' => AiSuggestionStatus::Withdrawn->value,
-                ],
-            ]);
-
-            return $suggestion;
-        });
+        if ($related->workspace_id !== $workspaceId) {
+            throw new InvalidArgumentException('Related object must belong to the same workspace.');
+        }
     }
 }

@@ -14,8 +14,6 @@ use Trustbird\Interviews\Contracts\HasInterviews;
 use Trustbird\Interviews\Enums\InterviewQuestionType;
 use Trustbird\Interviews\Enums\InterviewStatus;
 use Trustbird\Interviews\Enums\InterviewSuggestionDomain;
-use Trustbird\Interviews\Models\Interview;
-use Trustbird\Interviews\Models\InterviewQuestion;
 
 final readonly class InterviewsManager
 {
@@ -48,6 +46,12 @@ final readonly class InterviewsManager
         ?string $ownerId = null,
         ?array $metadata = null,
     ): HasInterviews {
+        $this->assertInterviewIsMutable($interview);
+
+        if ($status === InterviewStatus::Completed || $status === InterviewStatus::Archived) {
+            throw new InvalidArgumentException('Use complete() to finish an interview. Status cannot be set to completed or archived via update().');
+        }
+
         $attributes = array_filter([
             'title' => $title,
             'description' => $description,
@@ -62,7 +66,7 @@ final readonly class InterviewsManager
     }
 
     public function addQuestion(
-        Interview $interview,
+        HasInterviews $interview,
         string $prompt,
         InterviewQuestionType $type = InterviewQuestionType::Text,
         ?string $helpText = null,
@@ -73,6 +77,8 @@ final readonly class InterviewsManager
         int $position = 0,
         array $metadata = [],
     ): HasInterviewQuestions {
+        $this->assertInterviewIsMutable($interview);
+
         return DB::transaction(function () use ($interview, $prompt, $type, $helpText, $options, $suggestionDomain, $suggestionKey, $isRequired, $position, $metadata) {
             /** @var HasInterviewQuestions $model */
             $model = app(HasInterviewQuestions::class);
@@ -109,6 +115,8 @@ final readonly class InterviewsManager
         ?int $position = null,
         ?array $metadata = null,
     ): HasInterviewQuestions {
+        $this->assertInterviewIsMutable($question->interview);
+
         $attributes = array_filter([
             'prompt' => $prompt,
             'type' => $type,
@@ -127,14 +135,16 @@ final readonly class InterviewsManager
     }
 
     public function answer(
-        Interview $interview,
-        InterviewQuestion $question,
+        HasInterviews $interview,
+        HasInterviewQuestions $question,
         mixed $value,
         ?string $answeredById = null,
         ?string $notes = null,
         ?DateTimeInterface $answeredAt = null,
         array $metadata = [],
     ): HasInterviewAnswers {
+        $this->assertInterviewIsMutable($interview);
+
         if ($question->interview_id !== $interview->id) {
             throw new InvalidArgumentException('The question does not belong to this interview.');
         }
@@ -174,6 +184,13 @@ final readonly class InterviewsManager
     public function complete(HasInterviews $interview): HasInterviews
     {
         return app(CompleteInterview::class)->handle($interview);
+    }
+
+    private function assertInterviewIsMutable(HasInterviews $interview): void
+    {
+        if ($interview->status === InterviewStatus::Completed || $interview->status === InterviewStatus::Archived) {
+            throw new InvalidArgumentException('Completed or archived interviews cannot be modified.');
+        }
     }
 
     private function refreshProgress(HasInterviews $interview): void

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Trustbird\Ai\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Trustbird\Ai\Models\AiSuggestion;
+use Trustbird\Ai\Contracts\HasAiSuggestions;
 use Trustbird\Database\Factories\Ai\AiPromptFactory;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
@@ -30,7 +30,7 @@ trait InteractsWithAiPrompts
 
     public function suggestions(): HasMany
     {
-        return $this->hasMany(AiSuggestion::class, 'prompt_id');
+        return $this->hasMany(app(HasAiSuggestions::class)::class, 'prompt_id');
     }
 
     protected static function newFactory(): AiPromptFactory

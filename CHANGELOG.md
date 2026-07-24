@@ -12,6 +12,12 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - **Interviews module**: Interview sessions with questions, answers, progress metadata and suggestion hooks for future policy/risk/measure/evidence generation.
 - **AI module**: Provider/prompt abstraction with suggestion-based AI output, approval workflow and audit logging.
 
+### Fixed
+
+- Framework mappings and AI suggestions reject cross-workspace related subjects.
+- Framework requirements/mappings are immutable on published versions; interview updates cannot bypass `complete()`.
+- AI withdraw uses contracts/actions/events consistently with approve/reject; approve/reject audit writes are transactional.
+
 ## [0.1.0-alpha.6] - 2026-07-07
 
 ### Added

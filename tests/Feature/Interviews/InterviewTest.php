@@ -136,6 +136,36 @@ test('it cannot complete an archived interview', function (): void {
     Trustbird::interviews()->complete(interview: $interview);
 })->throws(InvalidArgumentException::class, 'Archived interviews cannot be completed.');
 
+test('it cannot complete an interview with unanswered required questions', function (): void {
+    $interview = Interview::factory()->create();
+
+    Trustbird::interviews()->addQuestion(
+        interview: $interview,
+        prompt: 'Required question?',
+        isRequired: true,
+    );
+
+    Trustbird::interviews()->complete(interview: $interview);
+})->throws(InvalidArgumentException::class, 'All required questions must be answered before completing the interview.');
+
+test('it cannot set completed status via update', function (): void {
+    $interview = Interview::factory()->create();
+
+    Trustbird::interviews()->update(
+        interview: $interview,
+        status: InterviewStatus::Completed,
+    );
+})->throws(InvalidArgumentException::class, 'Use complete() to finish an interview. Status cannot be set to completed or archived via update().');
+
+test('it cannot modify a completed interview', function (): void {
+    $interview = Interview::factory()->completed()->create();
+
+    Trustbird::interviews()->addQuestion(
+        interview: $interview,
+        prompt: 'Too late?',
+    );
+})->throws(InvalidArgumentException::class, 'Completed or archived interviews cannot be modified.');
+
 test('it can update interview and question metadata', function (): void {
     $interview = Interview::factory()->create(['title' => 'Old']);
     $question = Trustbird::interviews()->addQuestion(

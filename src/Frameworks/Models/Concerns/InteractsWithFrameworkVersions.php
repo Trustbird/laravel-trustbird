@@ -7,9 +7,9 @@ namespace Trustbird\Frameworks\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Trustbird\Database\Factories\Framework\FrameworkVersionFactory;
+use Trustbird\Frameworks\Contracts\HasFrameworkRequirements;
+use Trustbird\Frameworks\Contracts\HasFrameworks;
 use Trustbird\Frameworks\Enums\FrameworkVersionStatus;
-use Trustbird\Frameworks\Models\Framework;
-use Trustbird\Frameworks\Models\FrameworkRequirement;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
@@ -38,7 +38,7 @@ trait InteractsWithFrameworkVersions
 
     public function framework(): BelongsTo
     {
-        return $this->belongsTo(Framework::class);
+        return $this->belongsTo(app(HasFrameworks::class)::class);
     }
 
     public function publishedBy(): BelongsTo
@@ -48,7 +48,7 @@ trait InteractsWithFrameworkVersions
 
     public function requirements(): HasMany
     {
-        return $this->hasMany(FrameworkRequirement::class);
+        return $this->hasMany(app(HasFrameworkRequirements::class)::class);
     }
 
     public function isDraft(): bool

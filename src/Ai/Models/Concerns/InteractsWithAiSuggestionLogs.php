@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Trustbird\Ai\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Trustbird\Ai\Contracts\HasAiSuggestions;
 use Trustbird\Ai\Enums\AiSuggestionLogEvent;
-use Trustbird\Ai\Models\AiSuggestion;
 use Trustbird\Database\Factories\Ai\AiSuggestionLogFactory;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
@@ -34,7 +34,7 @@ trait InteractsWithAiSuggestionLogs
 
     public function suggestion(): BelongsTo
     {
-        return $this->belongsTo(AiSuggestion::class, 'suggestion_id');
+        return $this->belongsTo(app(HasAiSuggestions::class)::class, 'suggestion_id');
     }
 
     public function actor(): BelongsTo

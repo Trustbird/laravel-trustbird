@@ -7,7 +7,7 @@ namespace Trustbird\Frameworks\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Trustbird\Database\Factories\Framework\FrameworkFactory;
-use Trustbird\Frameworks\Models\FrameworkVersion;
+use Trustbird\Frameworks\Contracts\HasFrameworkVersions;
 use Trustbird\People\Contracts\HasPeople;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
@@ -38,12 +38,12 @@ trait InteractsWithFrameworks
 
     public function currentVersion(): BelongsTo
     {
-        return $this->belongsTo(FrameworkVersion::class, 'current_version_id');
+        return $this->belongsTo(app(HasFrameworkVersions::class)::class, 'current_version_id');
     }
 
     public function versions(): HasMany
     {
-        return $this->hasMany(FrameworkVersion::class);
+        return $this->hasMany(app(HasFrameworkVersions::class)::class);
     }
 
     public function hasPublishedVersion(): bool

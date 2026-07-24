@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Trustbird\Ai\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Trustbird\Ai\Contracts\HasAiSuggestions;
 use Trustbird\Ai\Enums\AiProviderDriver;
-use Trustbird\Ai\Models\AiSuggestion;
 use Trustbird\Database\Factories\Ai\AiProviderFactory;
 use Trustbird\Workspaces\Concerns\BelongsToWorkspace;
 
@@ -34,7 +34,7 @@ trait InteractsWithAiProviders
 
     public function suggestions(): HasMany
     {
-        return $this->hasMany(AiSuggestion::class, 'provider_id');
+        return $this->hasMany(app(HasAiSuggestions::class)::class, 'provider_id');
     }
 
     public function isActive(): bool

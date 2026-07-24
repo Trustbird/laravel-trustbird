@@ -7,7 +7,7 @@ namespace Trustbird\Frameworks\Events;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Trustbird\Frameworks\Contracts\HasFrameworks;
-use Trustbird\Frameworks\Models\FrameworkVersion;
+use Trustbird\Frameworks\Contracts\HasFrameworkVersions;
 
 final class FrameworkVersionDrafted
 {
@@ -15,6 +15,6 @@ final class FrameworkVersionDrafted
 
     public function __construct(
         public HasFrameworks $framework,
-        public FrameworkVersion $version,
+        public HasFrameworkVersions $version,
     ) {}
 }
