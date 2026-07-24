@@ -28,6 +28,9 @@ If you are installing Trustbird for the first time, start with:
 * [Documents](../02-usage/10-documents.md)
 * [Evidence](../02-usage/11-evidence.md)
 * [Reviews](../02-usage/12-reviews.md)
+* [Frameworks](../02-usage/13-frameworks.md)
+* [Interviews](../02-usage/14-interviews.md)
+* [AI](../02-usage/15-ai.md)
 
 ## Advanced
 

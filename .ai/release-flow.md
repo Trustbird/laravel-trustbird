@@ -65,6 +65,7 @@ After running the script:
 - [ ] Verify the PR was created and CI is running.
 - [ ] Confirm docs index links are complete.
 - [ ] Review the generated `Closes #...` list and edit the PR description if needed.
+- [ ] Run `.ai/pr-review.md` on the release PR and address Critical/Important findings.
 
 ## Manual fallback
 

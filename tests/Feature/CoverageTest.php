@@ -1,5 +1,13 @@
 <?php
 
+use Trustbird\Ai\Enums\AiProviderDriver;
+use Trustbird\Ai\Enums\AiSuggestionKind;
+use Trustbird\Ai\Enums\AiSuggestionLogEvent;
+use Trustbird\Ai\Enums\AiSuggestionStatus;
+use Trustbird\Ai\Events\AiSuggestionApproved;
+use Trustbird\Ai\Events\AiSuggestionRejected;
+use Trustbird\Ai\Events\AiSuggestionWithdrawn;
+use Trustbird\Ai\Models\AiSuggestion;
 use Trustbird\Assets\Enums\AssetKind;
 use Trustbird\Controls\Enums\ControlStatus;
 use Trustbird\Controls\Events\ControlApproved;
@@ -14,6 +22,17 @@ use Trustbird\Evidence\Enums\EvidenceStatus;
 use Trustbird\Evidence\Enums\EvidenceType;
 use Trustbird\Evidence\Events\EvidenceReviewed;
 use Trustbird\Evidence\Models\Evidence;
+use Trustbird\Frameworks\Enums\FrameworkMappingCoverage;
+use Trustbird\Frameworks\Enums\FrameworkVersionStatus;
+use Trustbird\Frameworks\Events\FrameworkVersionDrafted;
+use Trustbird\Frameworks\Events\FrameworkVersionPublished;
+use Trustbird\Frameworks\Models\Framework;
+use Trustbird\Interviews\Enums\InterviewQuestionType;
+use Trustbird\Interviews\Enums\InterviewStatus;
+use Trustbird\Interviews\Enums\InterviewSuggestionDomain;
+use Trustbird\Interviews\Events\InterviewArchived;
+use Trustbird\Interviews\Events\InterviewCompleted;
+use Trustbird\Interviews\Models\Interview;
 use Trustbird\People\Actions\MarkPersonnelTaskComplete;
 use Trustbird\People\Actions\RecordPersonnelReminder;
 use Trustbird\Reviews\Enums\ReviewerRole;
@@ -75,6 +94,20 @@ it('instantiates events', function (): void {
 
     $evidence = Evidence::factory()->make();
     expect(new EvidenceReviewed($evidence))->toBeInstanceOf(EvidenceReviewed::class);
+
+    $framework = Framework::factory()->withDraftVersion()->create();
+    $frameworkVersion = $framework->versions->first();
+    expect(new FrameworkVersionDrafted($framework, $frameworkVersion))->toBeInstanceOf(FrameworkVersionDrafted::class);
+    expect(new FrameworkVersionPublished($framework, $frameworkVersion))->toBeInstanceOf(FrameworkVersionPublished::class);
+
+    $interview = Interview::factory()->make();
+    expect(new InterviewCompleted($interview))->toBeInstanceOf(InterviewCompleted::class);
+    expect(new InterviewArchived($interview))->toBeInstanceOf(InterviewArchived::class);
+
+    $aiSuggestion = AiSuggestion::factory()->make();
+    expect(new AiSuggestionApproved($aiSuggestion))->toBeInstanceOf(AiSuggestionApproved::class);
+    expect(new AiSuggestionRejected($aiSuggestion))->toBeInstanceOf(AiSuggestionRejected::class);
+    expect(new AiSuggestionWithdrawn($aiSuggestion))->toBeInstanceOf(AiSuggestionWithdrawn::class);
 
     $review = Review::factory()->make();
     expect(new ReviewScheduled($review))->toBeInstanceOf(ReviewScheduled::class);
@@ -160,4 +193,31 @@ it('covers all enums', function (): void {
 
     expect(ReviewerRole::cases())->toBeArray()
         ->and(ReviewerRole::Primary->value)->toBe('primary');
+
+    expect(FrameworkVersionStatus::cases())->toBeArray()
+        ->and(FrameworkVersionStatus::Draft->value)->toBe('draft');
+
+    expect(FrameworkMappingCoverage::cases())->toBeArray()
+        ->and(FrameworkMappingCoverage::Full->value)->toBe('full');
+
+    expect(InterviewStatus::cases())->toBeArray()
+        ->and(InterviewStatus::InProgress->value)->toBe('in_progress');
+
+    expect(InterviewQuestionType::cases())->toBeArray()
+        ->and(InterviewQuestionType::Boolean->value)->toBe('boolean');
+
+    expect(InterviewSuggestionDomain::cases())->toBeArray()
+        ->and(InterviewSuggestionDomain::Policy->value)->toBe('policy');
+
+    expect(AiProviderDriver::cases())->toBeArray()
+        ->and(AiProviderDriver::OpenAi->value)->toBe('openai');
+
+    expect(AiSuggestionStatus::cases())->toBeArray()
+        ->and(AiSuggestionStatus::Pending->value)->toBe('pending');
+
+    expect(AiSuggestionKind::cases())->toBeArray()
+        ->and(AiSuggestionKind::Measure->value)->toBe('measure');
+
+    expect(AiSuggestionLogEvent::cases())->toBeArray()
+        ->and(AiSuggestionLogEvent::Approved->value)->toBe('approved');
 });

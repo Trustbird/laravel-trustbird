@@ -74,3 +74,13 @@ This includes:
 - commit messages
 - exception messages
 - test names
+
+## AI guidance location
+
+Shared AI / agent guidance must live under `.ai/` only.
+
+Never add editor-specific agent rules, skills, or prompts (for example under `.cursor/`, `.vscode/`, or similar).
+
+Colleagues use different editors; `.ai/` is the single source of truth for humans and every AI tool.
+
+PR review standards live in `.ai/pr-review.md`. After creating any new pull request, run that review before considering the PR ready.
